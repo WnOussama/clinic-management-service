@@ -13,7 +13,6 @@
 
 ## Example requests
 ### Postman
-![Screenshot 2021-01-13 at 23 37 57](https://user-images.githubusercontent.com/40702606/104790087-7a137480-578e-11eb-8141-307a8850c39e.png)
 
 ### CURL
 ```
