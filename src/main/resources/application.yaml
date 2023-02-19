@@ -1,0 +1,18 @@
+server:
+  port: 8085
+  servlet:
+    context-path: /clinic-management-service
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  database:
+    driverClassName: org.postgresql.Driver
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cmdb
+    username: admin
+    password: cmdb2023!
+  liquibase:
+    enabled: true
+    change-log: "classpath:db/changelog/db.changelog-master.yaml"

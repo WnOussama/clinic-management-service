@@ -1,26 +1,41 @@
+# Clinic Management Service
+This project was generated with help of Spring initilizr https://start.spring.io/.
 
-- [x] Spring Boot
-- [x] Spring Security
-- [x] Java Mail
-- [x] Email verification with expiry
+# Getting Started
 
-## Diagram
-![Screenshot 2021-01-13 at 23 38 08](https://user-images.githubusercontent.com/40702606/104789980-15581a00-578e-11eb-998d-30f2e6a9f461.png)
+### How to build
+**`mvn clean install`**
 
-## Email verification link with expiry
-![Screenshot 2021-01-13 at 23 37 33](https://user-images.githubusercontent.com/40702606/104789893-0c674880-578e-11eb-939a-2a1cd3a8dfd2.png)
+### How to start
 
-## Example requests
-### Postman
+#### Local environment (with Postgres)
+**Pre-requisite:** You should have docker desktop in your local windows machine. You can refer to [documentation](https://www.docker.com/products/docker-desktop/)
 
-### CURL
-```
-curl --location --request POST 'localhost:8080/api/v1/registration' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "firstName": "Amigos",
-    "lastName": "Code",
-    "email": "hellow@amigoscode.com",
-    "password": "password"
-}'
-```
+In order to run Postgres in docker container with your local environment, run command:
+**`docker-compose up -d`** which will use the configuration in **docker-compose.yaml** file.
+
+In order to start the application, run:
+**`mvn spring-boot:run -Dspring-boot.run.profiles=local`**
+
+### Reference Documentation
+For further reference, please consider the following sections:
+
+* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
+* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.0.2/maven-plugin/reference/html/)
+* [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.0.2/maven-plugin/reference/html/#build-image)
+* [Spring Web](https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#web)
+* [Spring Security](https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#web.security)
+* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#data.sql.jpa-and-spring-data)
+* [Java Mail Sender](https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#io.email)
+
+### Guides
+The following guides illustrate how to use some features concretely:
+
+* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
+* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
+* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
+* [Securing a Web Application](https://spring.io/guides/gs/securing-web/)
+* [Spring Boot and OAuth2](https://spring.io/guides/tutorials/spring-boot-oauth2/)
+* [Authenticating a User with LDAP](https://spring.io/guides/gs/authenticating-ldap/)
+* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
+
