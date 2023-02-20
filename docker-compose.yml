@@ -1,9 +1,10 @@
 version: '3.7'
 services:
   postgres:
-    image: postgres:10.5
+    image: postgres:11
     restart: always
     environment:
+      - POSTGRES_DB: cmdb
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=cmdb2023!
     ports:
