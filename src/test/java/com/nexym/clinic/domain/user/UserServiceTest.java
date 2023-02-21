@@ -1,6 +1,7 @@
 package com.nexym.clinic.domain.user;
 
 import com.nexym.clinic.domain.user.exception.UserNotFoundException;
+import com.nexym.clinic.domain.user.exception.UserValidationException;
 import com.nexym.clinic.domain.user.model.Civility;
 import com.nexym.clinic.domain.user.model.User;
 import org.assertj.core.api.Assertions;
@@ -31,25 +32,38 @@ public class UserServiceTest {
         // When
         var foundUser = userService.getUserById(userId);
         // Then
-        Assertions.assertThat(foundUser).isEqualTo(getUser(now));
+        Assertions.assertThat(foundUser).isEqualTo(getUser(Civility.MR,
+                "John",
+                "Doe",
+                "01122334455",
+                "john.doe@mail.com",
+                null));
     }
 
     @Test
     public void should_register_user_success() {
         // Given
-        var user = User.builder()
-                .civility(Civility.MR)
-                .firstName("Ali")
-                .lastName("Baba")
-                .email("ali.baba@mail.com")
-                .phoneNumber("0223344311")
-                .password("Toto2022")
-                .build();
+        var user = getUser(Civility.MRS,
+                "Ali",
+                "Baba",
+                "0223344311",
+                "ali.baba@mail.com",
+                "Toto2022");
 
         // When
         var foundUser = userService.registerUser(user);
         // Then
         Assertions.assertThat(foundUser).isEqualTo(1L);
+    }
+
+    @Test
+    public void should_register_user_missing_required_attribute_fail() {
+        // When
+        ThrowableAssert.ThrowingCallable callable = () -> userService.registerUser(User.builder().build());
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(UserValidationException.class)
+                .hasMessage("Failed to validate user request");
     }
 
     @Test
@@ -64,15 +78,16 @@ public class UserServiceTest {
                 .hasMessage("User with id '523' does not exist");
     }
 
-    private static User getUser(LocalDateTime now) {
+    private static User getUser(Civility civility, String firstName, String lastName, String phoneNumber, String email, String password) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return User.builder()
                 .id(1L)
-                .civility(Civility.MR)
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@mail.com")
-                .phoneNumber("01122334455")
+                .civility(civility)
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .password(password)
                 .creationDate(LocalDateTime.parse("2023-02-21 10:50:54", formatter))
                 .build();
     }
