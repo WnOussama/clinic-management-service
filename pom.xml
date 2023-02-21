@@ -38,6 +38,11 @@
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator</artifactId>
+			<version>6.4.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
@@ -87,25 +92,6 @@
 					<propertyFile>src/main/resources/application.yaml</propertyFile>
 					<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>6.3.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
-							<generatorName>java</generatorName>
-							<configOptions>
-								<sourceFolder>src/gen/java/main</sourceFolder>
-							</configOptions>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
