@@ -9,4 +9,6 @@ public interface UserPersistence {
     Optional<User> getUserById(Long userId);
 
     Long registerUser(User user);
+
+    boolean existsByEmail(String userEmail);
 }

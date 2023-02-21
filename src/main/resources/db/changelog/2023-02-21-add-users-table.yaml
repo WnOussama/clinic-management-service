@@ -39,6 +39,7 @@ databaseChangeLog:
                   type: varchar2
                   constraints:
                     nullable: false
+                    unique: true
               - column:
                   name: phone_number
                   type: varchar2
