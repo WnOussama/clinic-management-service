@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public Long registerUser(User user) {
         var errorList = user.applyValidations();
         if (FormatUtil.isFilled(errorList)) {
-            throw new UserValidationException("User validation error", errorList);
+            throw new UserValidationException("Failed to validate user request", errorList);
         }
         return userPersistence.registerUser(user);
     }
