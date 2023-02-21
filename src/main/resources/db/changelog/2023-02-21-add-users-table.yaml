@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-02-19-create-cmdb
+      author: oussamaouannassi@gmail.com
+      changes:
+        - createTable:
+            tableName: cm_users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+              - column:
+                  name: creation_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: civility
+                  type: varchar2
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar2
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar2
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar2
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: varchar2
+              - column:
+                  name: password
+                  type: varchar2
+                  constraints:
+                    nullable: false
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_users_seq
+            startValue: 1
+      rollback:
+        - dropSequence:
+          sequenceName: cm_users_seq
+        - dropTable:
+            tableName: cm_users

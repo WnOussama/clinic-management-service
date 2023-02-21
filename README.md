@@ -17,6 +17,9 @@ In order to run Postgres in docker container with your local environment, run co
 In order to start the application, run:
 **`mvn spring-boot:run -Dspring-boot.run.profiles=local`**
 
+To access swagger ui in local environment, go to:
+**`http://localhost:8085/clinic-management-service/swagger-ui/index.html`**
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
