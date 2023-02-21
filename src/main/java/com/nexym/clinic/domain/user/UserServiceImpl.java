@@ -28,7 +28,12 @@ public class UserServiceImpl implements UserService {
         var errorList = user.applyValidations();
         if (FormatUtil.isFilled(errorList)) {
             throw new UserValidationException("Failed to validate user request", errorList);
+        } else {
+            var userEmail = user.getEmail();
+            if (userPersistence.existsByEmail(userEmail)) {
+                throw new UserValidationException(String.format("User with email '%s' already exists", userEmail));
+            }
+            return userPersistence.registerUser(user);
         }
-        return userPersistence.registerUser(user);
     }
 }

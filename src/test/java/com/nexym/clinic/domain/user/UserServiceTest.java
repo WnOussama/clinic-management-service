@@ -57,6 +57,24 @@ public class UserServiceTest {
     }
 
     @Test
+    public void should_register_user_existing_same_email_fail() {
+        // Given
+        var user = getUser(Civility.MRS,
+                "Ali",
+                "Baba",
+                "0223344311",
+                "john.doe@mail.com",
+                "Toto2022");
+
+        // When
+        ThrowableAssert.ThrowingCallable callable = () ->  userService.registerUser(user);
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(UserValidationException.class)
+                .hasMessage("User with email 'john.doe@mail.com' already exists");
+    }
+
+    @Test
     public void should_register_user_missing_required_attribute_fail() {
         // When
         ThrowableAssert.ThrowingCallable callable = () -> userService.registerUser(User.builder().build());
