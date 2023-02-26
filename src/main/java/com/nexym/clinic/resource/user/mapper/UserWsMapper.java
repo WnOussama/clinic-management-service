@@ -3,10 +3,12 @@ package com.nexym.clinic.resource.user.mapper;
 import com.nexym.clinic.api.model.User;
 import com.nexym.clinic.api.model.UserRequest;
 import org.mapstruct.*;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR,
@@ -27,4 +29,6 @@ public interface UserWsMapper {
         }
         return null;
     }
+
+    List<User> mapToUserResponseList(List<com.nexym.clinic.domain.user.model.User> userList);
 }

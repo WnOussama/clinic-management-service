@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -64,5 +65,10 @@ public class UserResource implements UsersApi {
         } catch (Exception e) {
             throw new FunctionalException(e.getMessage());
         }
+    }
+
+    @Override
+    public ResponseEntity<List<User>> getUserList() {
+        return ResponseEntity.ok(userWsMapper.mapToUserResponseList(userService.getUserList()));
     }
 }

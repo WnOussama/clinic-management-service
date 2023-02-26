@@ -52,6 +52,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /api/v1/users:
+    get:
+      summary: Retrieve all users
+      operationId: getUserList
+      tags:
+        - Users
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/v1/users/{userId}:
     get:
       summary: Info for a specific user
@@ -129,6 +149,10 @@ components:
         password:
           type: string
           description: 'Password of the user'
+    UserListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
     User:
       type: object
       properties:
@@ -152,7 +176,7 @@ components:
         creationDate:
           type: string
           format: date-time
-&    Error:
+    Error:
       type: object
       properties:
         error:

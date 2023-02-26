@@ -2,6 +2,7 @@ package com.nexym.clinic.domain.user.port;
 
 import com.nexym.clinic.domain.user.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserPersistence {
@@ -12,4 +13,6 @@ public interface UserPersistence {
     Long registerUser(User user);
 
     boolean existsByEmail(String userEmail);
+
+    List<User> getUserList();
 }

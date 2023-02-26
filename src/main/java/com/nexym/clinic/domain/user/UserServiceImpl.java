@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -44,6 +45,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             return userPersistence.registerUser(user);
         }
+    }
+
+    @Override
+    public List<User> getUserList() {
+        return userPersistence.getUserList();
     }
 
     @Override
