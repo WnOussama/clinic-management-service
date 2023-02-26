@@ -4,6 +4,8 @@ import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.infra.user.entity.UserEntity;
 import org.mapstruct.*;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
@@ -15,4 +17,6 @@ public interface UserEntityMapper {
 
     @Mapping(target = "modifiedDate", ignore = true)
     UserEntity mapToEntity(User userModel);
+
+    List<User> mapToModelList(List<UserEntity> userList);
 }
