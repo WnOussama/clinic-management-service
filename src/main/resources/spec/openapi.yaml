@@ -5,10 +5,8 @@ info:
   description: Clinic Management provides information to manage medical reservations
   license:
     name: Nexym
-servers:
-  - url: http://localhost:8085/clinic-management-service/v1
 paths:
-  /users:
+  /api/v1/register:
     post:
       summary: Register a new user
       operationId: registerUser
@@ -29,7 +27,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /users/{userId}:
+  /api/v1/authenticate:
+    post:
+      summary: Authenticate an existing user
+      operationId: authenticate
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticateRequest'
+      responses:
+        '200':
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+               $ref: "#/components/schemas/AuthenticateResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/v1/users/{userId}:
     get:
       summary: Info for a specific user
       operationId: getUserById
@@ -58,25 +81,54 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
+    AuthenticateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: 'Email address of the user'
+          example: 'john.doe@mail.com'
+        password:
+          type: string
+          description: 'Password of the user'
+    AuthenticateResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        expiresIn:
+          type: integer
+          format: int64
     UserRequest:
       type: object
       properties:
         civility:
           type: string
+          description: 'Civility of the user'
+          example: 'MR'
           enum:
             - MR
             - MS
             - MRS
         firstName:
           type: string
+          description: 'First name of the user'
+          example: 'John'
         lastName:
           type: string
+          description: 'Last name of the user'
+          example: 'Doe'
         email:
           type: string
+          description: 'Email address of the user'
+          example: 'john.doe@mail.com'
         phoneNumber:
           type: string
+          description: 'Phone number of the user'
+          example: '0664124312'
         password:
           type: string
+          description: 'Password of the user'
     User:
       type: object
       properties:
@@ -100,7 +152,7 @@ components:
         creationDate:
           type: string
           format: date-time
-    Error:
+&    Error:
       type: object
       properties:
         error:

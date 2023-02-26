@@ -11,7 +11,6 @@ import org.mapstruct.*;
 )
 public interface UserEntityMapper {
 
-    @Mapping(target = "password", ignore = true)
     User mapToModel(UserEntity userEntity);
 
     @Mapping(target = "modifiedDate", ignore = true)

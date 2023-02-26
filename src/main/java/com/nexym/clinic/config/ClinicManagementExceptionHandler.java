@@ -2,6 +2,7 @@ package com.nexym.clinic.config;
 
 import com.nexym.clinic.utils.exception.FunctionalException;
 import com.nexym.clinic.utils.exception.TechnicalException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,14 @@ public class ClinicManagementExceptionHandler {
 
     @ExceptionHandler(value = AccessDeniedException.class)
     public ResponseEntity<ClinicApiError> handleAccessDeniedException(AccessDeniedException exception, ServletWebRequest httpServletRequest) {
+        return buildApiErrorResponse(httpServletRequest.getRequest().getRequestURI(),
+                FORBIDDEN,
+                exception.getMessage(),
+                Collections.emptyList());
+    }
+
+    @ExceptionHandler(value = ExpiredJwtException.class)
+    public ResponseEntity<ClinicApiError> handleExpiredJwtException(ExpiredJwtException exception, ServletWebRequest httpServletRequest) {
         return buildApiErrorResponse(httpServletRequest.getRequest().getRequestURI(),
                 FORBIDDEN,
                 exception.getMessage(),

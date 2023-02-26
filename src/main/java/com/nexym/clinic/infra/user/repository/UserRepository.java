@@ -22,6 +22,11 @@ public class UserRepository implements UserPersistence {
     }
 
     @Override
+    public Optional<User> getUserByEmail(String email) {
+        return userDao.findByEmail(email).map(userEntityMapper::mapToModel);
+    }
+
+    @Override
     public Long registerUser(User user) {
         var savedUser = userDao.save(userEntityMapper.mapToEntity(user));
         return savedUser.getId();
