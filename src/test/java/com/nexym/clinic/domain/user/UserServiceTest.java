@@ -24,12 +24,10 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
-    //TODO(awi) 26/02/2023 fix testing issue caused by filter chain
     @Test
     public void should_find_user_by_id_success() {
         // Given
         var userId = 1L;
-        var now = LocalDateTime.now();
         // When
         var foundUser = userService.getUserById(userId);
         // Then
@@ -38,7 +36,7 @@ public class UserServiceTest {
                 "Doe",
                 "01122334455",
                 "john.doe@mail.com",
-                null));
+                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W"));
     }
 
     @Test
@@ -68,7 +66,7 @@ public class UserServiceTest {
                 "Toto2022");
 
         // When
-        ThrowableAssert.ThrowingCallable callable = () ->  userService.registerUser(user);
+        ThrowableAssert.ThrowingCallable callable = () -> userService.registerUser(user);
         // Then
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(UserValidationException.class)

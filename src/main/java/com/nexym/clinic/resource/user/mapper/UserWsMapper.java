@@ -1,9 +1,12 @@
 package com.nexym.clinic.resource.user.mapper;
 
+import com.nexym.clinic.api.model.AuthenticateRequest;
+import com.nexym.clinic.api.model.AuthenticateResponse;
 import com.nexym.clinic.api.model.User;
 import com.nexym.clinic.api.model.UserRequest;
+import com.nexym.clinic.domain.user.model.auth.Authentication;
+import com.nexym.clinic.domain.user.model.auth.LoginCredential;
 import org.mapstruct.*;
-import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -31,4 +34,8 @@ public interface UserWsMapper {
     }
 
     List<User> mapToUserResponseList(List<com.nexym.clinic.domain.user.model.User> userList);
+
+    LoginCredential mapToCredentials(AuthenticateRequest authenticateRequest);
+
+    AuthenticateResponse mapToAuthenticateResponse(Authentication authenticate);
 }

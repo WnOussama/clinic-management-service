@@ -1,18 +1,25 @@
 package com.nexym.clinic.domain.user;
 
+import com.nexym.clinic.config.security.JwtProvider;
 import com.nexym.clinic.domain.user.exception.UserNotFoundException;
 import com.nexym.clinic.domain.user.exception.UserValidationException;
 import com.nexym.clinic.domain.user.model.User;
+import com.nexym.clinic.domain.user.model.auth.Authentication;
+import com.nexym.clinic.domain.user.model.auth.LoginCredential;
 import com.nexym.clinic.domain.user.port.UserPersistence;
 import com.nexym.clinic.utils.FormatUtil;
+import com.nexym.clinic.utils.exception.AccessDeniedException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private JwtProvider jwtUtils;
 
 
     @Override
@@ -50,6 +60,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUserList() {
         return userPersistence.getUserList();
+    }
+
+    @Override
+    public com.nexym.clinic.domain.user.model.auth.Authentication authenticate(LoginCredential loginCredential,
+                                                                               AuthenticationManager authenticationManager) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginCredential.getEmail(),
+                loginCredential.getPassword(),
+                new ArrayList<>()));
+        var user = loadUserByUsername(loginCredential.getEmail());
+        if (user != null) {
+            var token = jwtUtils.generateToken(user);
+            var expirationDate = jwtUtils.getExpirationDateFromToken(token);
+            var now = new Date();
+            return Authentication.builder()
+                    .token(token)
+                    .expiresIn((expirationDate.getTime() - now.getTime()) / 1000)
+                    .build();
+        }
+        throw new AccessDeniedException("The access to this resource is denied");
     }
 
     @Override
