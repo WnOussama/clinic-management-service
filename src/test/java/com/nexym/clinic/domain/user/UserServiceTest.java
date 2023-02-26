@@ -18,14 +18,14 @@ import java.time.format.DateTimeFormatter;
 
 @ExtendWith(MockitoExtension.class)
 @DataJpaTest
-@Sql("/user/db/user-test-data.sql")
-public class UserServiceTest {
+@Sql("/user/db/data-27-02-2023.sql")
+class UserServiceTest {
 
     @Autowired
     private UserService userService;
 
     @Test
-    public void should_find_user_by_id_success() {
+    void should_find_user_by_id_success() {
         // Given
         var userId = 1L;
         // When
@@ -40,7 +40,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void should_register_user_success() {
+    void should_register_user_success() {
         // Given
         var user = getUser(Civility.MRS,
                 "Ali",
@@ -56,7 +56,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void should_register_user_existing_same_email_fail() {
+    void should_register_user_existing_same_email_fail() {
         // Given
         var user = getUser(Civility.MRS,
                 "Ali",
@@ -74,7 +74,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void should_register_user_missing_required_attribute_fail() {
+    void should_register_user_missing_required_attribute_fail() {
         // When
         ThrowableAssert.ThrowingCallable callable = () -> userService.registerUser(User.builder().build());
         // Then
@@ -84,7 +84,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void should_find_user_by_id_not_found_fail() {
+    void should_find_user_by_id_not_found_fail() {
         // Given
         var userId = 523L;
         // When
@@ -93,6 +93,24 @@ public class UserServiceTest {
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("User with id '523' does not exist");
+    }
+
+    @Test
+    void should_load_user_by_username_not_found_fail() {
+        ThrowableAssert.ThrowingCallable callable = () -> userService.loadUserByUsername("not_found@mail.com");
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("User with email 'not_found@mail.com' not found");
+    }
+
+    @Test
+    void should_load_user_by_username_success() {
+        String username = "john.doe@mail.com";
+        var details = userService.loadUserByUsername(username);
+        // Then
+        Assertions.assertThat(details).isNotNull();
+        Assertions.assertThat(details.getUsername()).isEqualTo(username);
     }
 
     private static User getUser(Civility civility, String firstName, String lastName, String phoneNumber, String email, String password) {

@@ -3,13 +3,10 @@ package com.nexym.clinic.infra.user.repository;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.port.UserPersistence;
 import com.nexym.clinic.infra.user.dao.UserDao;
-import com.nexym.clinic.infra.user.entity.UserEntity;
 import com.nexym.clinic.infra.user.mapper.UserEntityMapper;
-import com.nexym.clinic.utils.FormatUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

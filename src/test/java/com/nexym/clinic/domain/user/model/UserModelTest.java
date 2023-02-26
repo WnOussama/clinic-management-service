@@ -8,10 +8,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class UserModelTest {
+class UserModelTest {
 
     @Test
-    public void should_user_validate_missing_first_name_fail() {
+    void should_user_validate_missing_first_name_fail() {
         var user = User.builder()
                 .phoneNumber("01134345")
                 .lastName("Doe")
@@ -24,7 +24,7 @@ public class UserModelTest {
     }
 
     @Test
-    public void should_user_validate_missing_last_name_fail() {
+    void should_user_validate_missing_last_name_fail() {
         var user = User.builder()
                 .phoneNumber("01134345")
                 .firstName("John")
@@ -37,7 +37,7 @@ public class UserModelTest {
     }
 
     @Test
-    public void should_user_validate_missing_all_required_attributes_fail() {
+    void should_user_validate_missing_all_required_attributes_fail() {
         var user = User.builder().build();
         Assertions.assertThat(user.applyValidations())
                 .isEqualTo(List.of("Civility should be filled",

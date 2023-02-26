@@ -9,6 +9,10 @@ spring:
       ddl-auto: validate
   database:
     driverClassName: org.postgresql.Driver
+  datasource:
+    url: jdbc:postgresql://${DATABASE_ENDPOINT}:${DATABASE_ENDPOINT_PORT:5432}/cmdb
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
   liquibase:
     enabled: true
     change-log: "classpath:db/changelog/db.changelog-master.yaml"
@@ -19,6 +23,9 @@ springdoc:
     path: /swagger-ui
     operationsSorter: method
     tagsSorter: alpha
+  api-docs.path: /api-docs
+jwt:
+  secret: ${JWT_SECRET}
 
 # -----------------------------------------------------------------#
 # Actuator configuration

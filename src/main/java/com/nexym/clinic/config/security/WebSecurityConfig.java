@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@SuppressWarnings({"java:S3305", "inject directly the field value will not add any value"})
 public class WebSecurityConfig {
 
     @Autowired
@@ -50,7 +51,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((auth) ->
+                .authorizeHttpRequests(auth ->
                         // do not authenticate this particular request
                         auth.requestMatchers(AUTH_WHITELIST).permitAll()
                                 // all other requests need to be authenticated

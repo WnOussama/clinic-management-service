@@ -2,6 +2,7 @@ package com.nexym.clinic.config.security;
 
 import com.nexym.clinic.domain.user.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -36,9 +38,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtProvider.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
+                logger.warn("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
+                logger.warn("JWT Token has expired");
             }
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
@@ -49,7 +51,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             var userDetails = userService.loadUserByUsername(username);
             // if token is valid configure Spring Security to manually set
             // authentication
-            if (jwtProvider.validateToken(jwtToken, userDetails)) {
+            if (Boolean.TRUE.equals(jwtProvider.validateToken(jwtToken, userDetails))) {
                 var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

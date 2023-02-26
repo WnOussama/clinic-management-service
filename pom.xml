@@ -42,6 +42,11 @@
 		<springdoc-openapi-ui.version>2.0.2</springdoc-openapi-ui.version>
 		<hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
 		<jjwt.version>0.9.1</jjwt.version>
+		<jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+		<!-- Sonar properties -->
+		<sonar.projectKey>clinic-management-service</sonar.projectKey>
+		<sonar.organization>nexymlab</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -266,7 +271,7 @@
 							<value>conf/log4j.properties</value>
 						</property>
 					</systemProperties>
-					<argLine>-Xms512m -Xmx1500m</argLine>
+					<argLine>@{argLine} -Xms512m -Xmx1500m</argLine>
 					<parallel>methods</parallel>
 					<threadCount>10</threadCount>
 				</configuration>
@@ -370,6 +375,26 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<!-- attached to Maven test phase -->
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
