@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = ClinicManagementServiceApplication.class, webEnvironment = RANDOM_PORT)
-public class UserResourceTest {
+class UserResourceTest {
 
     @Autowired
     private FilterChainProxy springSecurityFilterChain;
@@ -52,7 +52,7 @@ public class UserResourceTest {
     private static final String PASSWORD_TEST = "password";
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(userResource)
                 .setControllerAdvice(new ClinicManagementExceptionHandler())
@@ -61,14 +61,14 @@ public class UserResourceTest {
     }
 
     @Test
-    public void should_get_user_by_id_not_authenticated_fail() throws Exception {
+    void should_get_user_by_id_not_authenticated_fail() throws Exception {
         mockMvc.perform(get(getUserByIdUrl(2L))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void should_get_user_by_id_success() throws Exception {
+    void should_get_user_by_id_success() throws Exception {
         when(userService.loadUserByUsername(EMAIL_TEST)).thenReturn(new User(EMAIL_TEST, PASSWORD_TEST, new ArrayList<>()));
         when(userService.getUserById(1L)).thenReturn(com.nexym.clinic.domain.user.model.User.builder()
                 .id(1L)
@@ -85,7 +85,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void should_register_user_success() throws Exception {
+    void should_register_user_success() throws Exception {
         when(userService.registerUser(any())).thenReturn(1L);
         var request = new UserRequest().email("john.doe@mail.com")
                 .civility(UserRequest.CivilityEnum.MR)

@@ -32,7 +32,7 @@ paths:
       summary: Authenticate an existing user
       operationId: authenticate
       tags:
-        - Users
+        - Auth
       requestBody:
         required: true
         content:

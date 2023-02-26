@@ -16,8 +16,9 @@ import java.util.function.Function;
 @Component
 public class JwtProvider implements Serializable {
 
+    private static final long SECONDS = 60;
     // The token expires in 5 hours
-    private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    private static final long JWT_TOKEN_VALIDITY = 5 * 60 * SECONDS;
 
     @Value("${jwt.secret}")
     private String secret;
