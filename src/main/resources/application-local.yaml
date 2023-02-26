@@ -18,11 +18,17 @@ spring:
     change-log: "classpath:db/changelog/db.changelog-master.yaml"
 logging:
   excluded-requests: /actuator/health, /swagger-ui, /api-docs
+  level:
+    org.springframework.security: TRACE
 springdoc:
   swagger-ui:
     path: /swagger-ui
     operationsSorter: method
     tagsSorter: alpha
+  api-docs.path: /api-docs
+jwt:
+  secret: 'mysigningkey'
+
 
 # -----------------------------------------------------------------#
 # Actuator configuration

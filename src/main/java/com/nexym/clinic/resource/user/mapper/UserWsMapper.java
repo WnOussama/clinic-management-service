@@ -22,6 +22,9 @@ public interface UserWsMapper {
     com.nexym.clinic.domain.user.model.User mapToUserModel(UserRequest userRequest);
 
     default OffsetDateTime map(LocalDateTime date) {
-        return date.atOffset(ZoneOffset.UTC);
+        if (date != null) {
+            return date.atOffset(ZoneOffset.UTC);
+        }
+        return null;
     }
 }

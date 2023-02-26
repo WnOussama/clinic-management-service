@@ -15,6 +15,8 @@ spring:
     contexts: test
 logging:
   excluded-requests: /actuator/health, /swagger-ui, /api-docs
+jwt:
+  secret: 'mysigningkey'
 
 # -----------------------------------------------------------------#
 # Actuator configuration

@@ -24,6 +24,7 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    //TODO(awi) 26/02/2023 fix testing issue caused by filter chain
     @Test
     public void should_find_user_by_id_success() {
         // Given
