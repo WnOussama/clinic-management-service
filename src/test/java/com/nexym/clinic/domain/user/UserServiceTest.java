@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 
 @ExtendWith(MockitoExtension.class)
 @DataJpaTest
-@Sql("/user/db/user-test-data.sql")
+@Sql("/user/db/data-27-02-2023.sql")
 public class UserServiceTest {
 
     @Autowired
