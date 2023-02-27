@@ -1,5 +1,7 @@
 package com.nexym.clinic.config.security;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -8,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@OpenAPIDefinition(info = @Info(title = "Clinic Management Service",
+        description = "An integrated information system for managing all aspects of a medical clinic's operations such as medical, financial, administrative, legal, and compliance ",
+        version = "v1"))
 public class SwaggerConfig {
     @Bean
     public OpenAPI customizeOpenAPI() {

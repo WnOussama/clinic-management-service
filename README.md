@@ -1,6 +1,5 @@
 # Clinic Management Service
-This project was generated with help of Spring initilizr https://start.spring.io/.
-
+An integrated information system for managing all aspects of a medical clinic's operations such as medical, financial, administrative, legal, and compliance.
 # Getting Started
 
 ### How to build
