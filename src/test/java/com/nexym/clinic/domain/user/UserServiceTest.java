@@ -15,6 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 @DataJpaTest
@@ -111,6 +112,18 @@ class UserServiceTest {
         // Then
         Assertions.assertThat(details).isNotNull();
         Assertions.assertThat(details.getUsername()).isEqualTo(username);
+    }
+
+    @Test
+    void should_get_user_list_success() {
+        var userList = userService.getUserList();
+        // Then
+        Assertions.assertThat(userList).isEqualTo(List.of(getUser(Civility.MR,
+                "John",
+                "Doe",
+                "01122334455",
+                "john.doe@mail.com",
+                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W")));
     }
 
     private static User getUser(Civility civility, String firstName, String lastName, String phoneNumber, String email, String password) {
