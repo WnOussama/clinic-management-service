@@ -43,4 +43,10 @@ public class UserRepository implements UserPersistence {
         var userEntityList = userDao.findAll();
         return userEntityMapper.mapToModelList(userEntityList);
     }
+
+    @Override
+    public User save(User user) {
+        return userEntityMapper.mapToModel(userDao.save(userEntityMapper.mapToEntity(user)));
+    }
+
 }

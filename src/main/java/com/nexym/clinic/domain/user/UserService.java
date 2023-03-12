@@ -16,4 +16,6 @@ public interface UserService extends UserDetailsService {
     List<User> getUserList();
 
     Authentication authenticate(LoginCredential loginCredential, AuthenticationManager authenticationManager);
+
+    User updateUserById(Long userId, User user);
 }

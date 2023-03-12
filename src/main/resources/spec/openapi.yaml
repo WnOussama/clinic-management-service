@@ -99,6 +99,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a user by ID
+      operationId: updateUserById
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     AuthenticateRequest:
@@ -138,6 +170,13 @@ components:
           type: string
           description: 'Last name of the user'
           example: 'Doe'
+        role:
+          type: string
+          description: 'Role of the user'
+          example: 'PATIENT'
+          enum:
+            - DOCTOR
+            - PATIENT
         email:
           type: string
           description: 'Email address of the user'
@@ -169,6 +208,11 @@ components:
           type: string
         lastName:
           type: string
+        role:
+          type: string
+          enum:
+            - DOCTOR
+            - PATIENT
         email:
           type: string
         phoneNumber:
