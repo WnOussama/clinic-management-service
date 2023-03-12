@@ -15,4 +15,7 @@ public interface UserPersistence {
     boolean existsByEmail(String userEmail);
 
     List<User> getUserList();
+
+    User save(User user);
+
 }

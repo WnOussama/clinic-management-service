@@ -16,6 +16,7 @@ public class User {
     private Civility civility;
     private String firstName;
     private String lastName;
+    private UserRole role;
     private String email;
     private String password;
     private String phoneNumber;
@@ -32,6 +33,9 @@ public class User {
         }
         if (!FormatUtil.isFilled(getLastName())) {
             subErrors.add("Last name should be filled");
+        }
+        if (getRole() == null) {
+            subErrors.add("User role should be filled");
         }
         if (!FormatUtil.isFilled(getEmail())) {
             subErrors.add("Email should be filled");

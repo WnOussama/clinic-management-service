@@ -3,6 +3,7 @@ package com.nexym.clinic.domain.user;
 import com.nexym.clinic.config.security.JwtProvider;
 import com.nexym.clinic.domain.user.exception.UserNotFoundException;
 import com.nexym.clinic.domain.user.exception.UserValidationException;
+import com.nexym.clinic.domain.user.mapper.UserMapper;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.model.auth.Authentication;
 import com.nexym.clinic.domain.user.model.auth.LoginCredential;
@@ -25,6 +26,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private UserPersistence userPersistence;
@@ -87,4 +91,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with email '%s' not found", email)));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
+
+    @Override
+    public User updateUserById(Long userId, User user) {
+        User existingUser = userPersistence.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id '%d' not found", userId)));
+        userMapper.merge(existingUser, user);
+        if (FormatUtil.isFilled(user.getPassword())) {
+            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
+        return userPersistence.save(existingUser);
+    }
+
 }

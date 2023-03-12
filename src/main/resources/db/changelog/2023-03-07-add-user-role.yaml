@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-03-07-add-column
+      author: oussamaouannassi@gmail.com
+      changes:
+        - addColumn:
+            tableName: cm_users
+            columns:
+              - column:
+                  name: role
+                  type: varchar2
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            columnName: role
+            tableName: cm_users

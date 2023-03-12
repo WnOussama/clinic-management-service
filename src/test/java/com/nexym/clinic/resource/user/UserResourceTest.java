@@ -6,6 +6,7 @@ import com.nexym.clinic.api.model.UserRequest;
 import com.nexym.clinic.config.ClinicManagementExceptionHandler;
 import com.nexym.clinic.config.security.JwtProvider;
 import com.nexym.clinic.domain.user.UserService;
+import com.nexym.clinic.domain.user.model.UserRole;
 import com.nexym.clinic.resource.user.api.UserResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +23,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = ClinicManagementServiceApplication.class, webEnvironment = RANDOM_PORT)
@@ -41,10 +44,10 @@ class UserResourceTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
 
     private MockMvc mockMvc;
 
@@ -62,9 +65,46 @@ class UserResourceTest {
 
     @Test
     void should_get_user_by_id_not_authenticated_fail() throws Exception {
-        mockMvc.perform(get(getUserByIdUrl(2L))
+        mockMvc.perform(get(usersByIdUrl(2L))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void should_update_user_by_id_not_authenticated_fail() throws Exception {
+        mockMvc.perform(put(usersByIdUrl(2L))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void should_update_user_by_id_success() throws Exception {
+        when(userService.loadUserByUsername(EMAIL_TEST)).thenReturn(new User(EMAIL_TEST, PASSWORD_TEST, new ArrayList<>()));
+        when(userService.updateUserById(eq(2L), any(com.nexym.clinic.domain.user.model.User.class))).thenReturn(com.nexym.clinic.domain.user.model.User.builder()
+                .id(2L)
+                .firstName("John")
+                .lastName("Doe")
+                .role(UserRole.PATIENT)
+                .build());
+        var token = jwtProvider.generateToken(new User(EMAIL_TEST,
+                PASSWORD_TEST,
+                new ArrayList<>()));
+        mockMvc.perform(put(usersByIdUrl(2L))
+                        .content("{\"firstName\": \"toto\"}")
+                        .header("Authorization", String.format("Bearer %s", token))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
+                        {"id":2,
+                        "civility":null,
+                        "firstName":"John",
+                        "lastName":"Doe",
+                        "role":"PATIENT",
+                        "email":null,
+                        "phoneNumber":null,
+                        "creationDate":null}
+                        """));
     }
 
     @Test
@@ -78,7 +118,7 @@ class UserResourceTest {
         var token = jwtProvider.generateToken(new User(EMAIL_TEST,
                 PASSWORD_TEST,
                 new ArrayList<>()));
-        mockMvc.perform(get(getUserByIdUrl(1L))
+        mockMvc.perform(get(usersByIdUrl(1L))
                         .header("Authorization", String.format("Bearer %s", token))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -90,6 +130,7 @@ class UserResourceTest {
         var request = new UserRequest().email("john.doe@mail.com")
                 .civility(UserRequest.CivilityEnum.MR)
                 .phoneNumber("0121348345")
+                .role(UserRequest.RoleEnum.PATIENT)
                 .firstName("John")
                 .lastName("Doe")
                 .password("myPassword");
@@ -103,7 +144,7 @@ class UserResourceTest {
         return "/api/v1/register";
     }
 
-    private String getUserByIdUrl(Long userId) {
+    private String usersByIdUrl(Long userId) {
         return String.format("/api/v1/users/%s", userId);
     }
 }
