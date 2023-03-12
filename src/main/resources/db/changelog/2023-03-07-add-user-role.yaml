@@ -9,6 +9,7 @@ databaseChangeLog:
               - column:
                   name: role
                   type: varchar2
+                  defaultValue: "PATIENT"
                   constraints:
                     nullable: false
       rollback:
