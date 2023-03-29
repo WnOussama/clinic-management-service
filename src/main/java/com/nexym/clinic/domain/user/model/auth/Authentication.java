@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class Authentication {
 
+    private Long id;
     private String token;
     private Long expiresIn;
 }

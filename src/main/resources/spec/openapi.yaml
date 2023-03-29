@@ -169,6 +169,9 @@ components:
     AuthenticateResponse:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         token:
           type: string
         expiresIn:
