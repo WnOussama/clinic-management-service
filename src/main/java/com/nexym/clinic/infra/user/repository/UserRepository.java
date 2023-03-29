@@ -49,4 +49,8 @@ public class UserRepository implements UserPersistence {
         return userEntityMapper.mapToModel(userDao.save(userEntityMapper.mapToEntity(user)));
     }
 
+    @Override
+    public void deleteById(Long userId) {
+        userDao.deleteById(userId);
+    }
 }

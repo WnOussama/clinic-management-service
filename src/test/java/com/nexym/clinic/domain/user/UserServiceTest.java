@@ -68,9 +68,9 @@ class UserServiceTest {
                 .build();
 
         // When
-        var foundUser = userService.updateUserById(1L, user);
+        var updatedUser = userService.updateUserById(1L, user);
         // Then
-        Assertions.assertThat(foundUser).isEqualTo(getUser(Civility.MR,
+        Assertions.assertThat(updatedUser).isEqualTo(getUser(Civility.MR,
                 "Johnnie",
                 "Doe",
                 "01122334455",
@@ -81,11 +81,32 @@ class UserServiceTest {
     }
 
     @Test
+    void should_delete_user_by_id_success() {
+        // When
+        userService.deleteUserById(1L);
+        // Then
+        ThrowableAssert.ThrowingCallable callable = () -> userService.getUserById(1L);
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("User with id '1' does not exist");
+    }
+
+    @Test
     void should_update_user_by_id_not_exist_fail() {
         // When
         ThrowableAssert.ThrowingCallable callable = () -> userService.updateUserById(2L, User.builder()
                 .firstName("Toto")
                 .build());
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("User with id '2' not found");
+    }
+
+    @Test
+    void should_delete_user_by_id_not_exist_fail() {
+        // When
+        ThrowableAssert.ThrowingCallable callable = () -> userService.deleteUserById(2L);
         // Then
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(UserNotFoundException.class)

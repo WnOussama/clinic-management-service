@@ -18,4 +18,6 @@ public interface UserService extends UserDetailsService {
     Authentication authenticate(LoginCredential loginCredential, AuthenticationManager authenticationManager);
 
     User updateUserById(Long userId, User user);
+
+    void deleteUserById(Long userId);
 }

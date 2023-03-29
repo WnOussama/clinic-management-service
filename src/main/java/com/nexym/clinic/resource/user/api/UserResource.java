@@ -43,4 +43,10 @@ public class UserResource implements UsersApi {
         com.nexym.clinic.domain.user.model.User updatedUser = userService.updateUserById(userId, userWsMapper.mapToUserModel(userRequest));
         return ResponseEntity.ok(userWsMapper.mapToApiModel(updatedUser));
     }
+
+    @Override
+    public ResponseEntity<Void> deleteUserById(Long userId) {
+        userService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
+    }
 }
