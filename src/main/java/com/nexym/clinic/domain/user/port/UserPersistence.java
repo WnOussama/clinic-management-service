@@ -18,4 +18,5 @@ public interface UserPersistence {
 
     User save(User user);
 
+    void deleteById(Long userId);
 }

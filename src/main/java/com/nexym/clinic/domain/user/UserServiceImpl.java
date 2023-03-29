@@ -103,4 +103,11 @@ public class UserServiceImpl implements UserService {
         return userPersistence.save(existingUser);
     }
 
+    @Override
+    public void deleteUserById(Long userId) {
+        if (userPersistence.getUserById(userId).isEmpty()) {
+            throw new UserNotFoundException(String.format("User with id '%d' not found", userId));
+        }
+        userPersistence.deleteById(userId);
+    }
 }

@@ -10,6 +10,7 @@ import com.nexym.clinic.domain.user.model.UserRole;
 import com.nexym.clinic.resource.user.api.UserResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -75,6 +76,28 @@ class UserResourceTest {
         mockMvc.perform(put(usersByIdUrl(2L))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void should_delete_user_by_id_not_authenticated_fail() throws Exception {
+        mockMvc.perform(delete(usersByIdUrl(2L))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void should_delete_user_by_id_success() throws Exception {
+        when(userService.loadUserByUsername(EMAIL_TEST)).thenReturn(new User(EMAIL_TEST, PASSWORD_TEST, new ArrayList<>()));
+        Mockito.doNothing().when(userService).deleteUserById(2L);
+        var token = jwtProvider.generateToken(new User(EMAIL_TEST,
+                PASSWORD_TEST,
+                new ArrayList<>()));
+        mockMvc.perform(delete(usersByIdUrl(2L))
+                        .header("Authorization", String.format("Bearer %s", token))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        verify(userService, times(1)).deleteUserById(2L);
     }
 
     @Test
