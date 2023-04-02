@@ -5,6 +5,8 @@ import com.nexym.clinic.domain.user.exception.UserValidationException;
 import com.nexym.clinic.domain.user.model.Civility;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.model.UserRole;
+import com.nexym.clinic.domain.user.model.auth.LoginCredential;
+import com.nexym.clinic.utils.exception.AccessDeniedException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
@@ -25,6 +29,9 @@ class UserServiceTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Test
     void should_find_user_by_id_success() {
@@ -89,6 +96,35 @@ class UserServiceTest {
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("User with id '1' does not exist");
+    }
+
+    @Test
+    void should_authenticate_success() {
+        // Given
+        var loginCredential = LoginCredential.builder()
+                .email("john.doe@mail.com")
+                .password("password")
+                .build();
+        // When
+        var auth = userService.authenticate(loginCredential, authenticationManager);
+        // Then
+        Assertions.assertThat(auth).isNotNull();
+        Assertions.assertThat(auth.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void should_authenticate_user_not_found_fail() {
+        // Given
+        var loginCredential = LoginCredential.builder()
+                .email("johnnie.doe@mail.com")
+                .password("password")
+                .build();
+        // When
+        ThrowableAssert.ThrowingCallable callable = () -> userService.authenticate(loginCredential, authenticationManager);
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(InternalAuthenticationServiceException.class)
+                .hasMessage("Access to this resource is denied");
     }
 
     @Test
@@ -159,8 +195,8 @@ class UserServiceTest {
         ThrowableAssert.ThrowingCallable callable = () -> userService.loadUserByUsername("not_found@mail.com");
         // Then
         Assertions.assertThatThrownBy(callable)
-                .isInstanceOf(UserNotFoundException.class)
-                .hasMessage("User with email 'not_found@mail.com' not found");
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessage("Access to this resource is denied");
     }
 
     @Test
