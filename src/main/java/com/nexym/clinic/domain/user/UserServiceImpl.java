@@ -70,32 +70,17 @@ public class UserServiceImpl implements UserService {
     public com.nexym.clinic.domain.user.model.auth.Authentication authenticate(LoginCredential loginCredential,
                                                                                AuthenticationManager authenticationManager) {
         var email = loginCredential.getEmail();
+        var password = loginCredential.getPassword();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,
-                loginCredential.getPassword(),
+                password,
                 new ArrayList<>()));
-        com.nexym.clinic.domain.user.model.User userFromDb = getUserByEmail(email);
-        var user = loadUserByUsername(email);
-        if (user != null) {
-            var token = jwtUtils.generateToken(user);
-            var expirationDate = jwtUtils.getExpirationDateFromToken(token);
-            var now = new Date();
-            return Authentication.builder()
-                    .id(userFromDb.getId())
-                    .token(token)
-                    .expiresIn((expirationDate.getTime() - now.getTime()) / 1000)
-                    .build();
-        }
-        throw new AccessDeniedException("The access to this resource is denied");
-    }
-
-    private User getUserByEmail(String email) {
-        return userPersistence.getUserByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with email '%s' not found", email)));
+        return generateUserAuthentication(email);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        com.nexym.clinic.domain.user.model.User user = getUserByEmail(email);
+        com.nexym.clinic.domain.user.model.User user = userPersistence.getUserByEmail(email)
+                .orElseThrow(() -> new AccessDeniedException("Access to this resource is denied"));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 
@@ -116,5 +101,19 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException(String.format("User with id '%d' not found", userId));
         }
         userPersistence.deleteById(userId);
+    }
+
+    private Authentication generateUserAuthentication(String email) {
+        User userFromDb = userPersistence.getUserByEmail(email)
+                .orElseThrow(() -> new AccessDeniedException("Access to this resource is denied"));
+        var user = loadUserByUsername(email);
+        var token = jwtUtils.generateToken(user);
+        var expirationDate = jwtUtils.getExpirationDateFromToken(token);
+        var now = new Date();
+        return Authentication.builder()
+                .id(userFromDb.getId())
+                .token(token)
+                .expiresIn((expirationDate.getTime() - now.getTime()) / 1000)
+                .build();
     }
 }

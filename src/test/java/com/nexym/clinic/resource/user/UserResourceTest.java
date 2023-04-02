@@ -119,14 +119,15 @@ class UserResourceTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json("""
-                        {"id":2,
-                        "civility":null,
-                        "firstName":"John",
-                        "lastName":"Doe",
-                        "role":"PATIENT",
-                        "email":null,
-                        "phoneNumber":null,
-                        "creationDate":null}
+                        {
+                            "id":2,
+                            "civility":null,
+                            "firstName":"John",
+                            "lastName":"Doe",
+                            "role":"PATIENT",
+                            "email":null,
+                            "phoneNumber":null,
+                            "creationDate":null}
                         """));
     }
 
