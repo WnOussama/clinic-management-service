@@ -3,6 +3,14 @@ server:
   servlet:
     context-path: /clinic-management-service
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: oussamaouannassi@gmail.com
+    password: fjbpzcbbnsduhdth
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
   jpa:
     show-sql: true
     hibernate:

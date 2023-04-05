@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -101,6 +102,11 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException(String.format("User with id '%d' not found", userId));
         }
         userPersistence.deleteById(userId);
+    }
+
+    @Override
+    public Optional<User> findUserByResetToken(String resetToken) {
+        return Optional.empty();
     }
 
     private Authentication generateUserAuthentication(String email) {

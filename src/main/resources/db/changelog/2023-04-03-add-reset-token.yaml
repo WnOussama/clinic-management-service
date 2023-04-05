@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-04-03-add-column
+      author: oussamaouannassi@gmail.com
+      changes:
+        - addColumn:
+            tableName: cm_users
+            columns:
+              - column:
+                  name: resetToken
+                  type: varchar2
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            columnName: resetToken
+            tableName: cm_users

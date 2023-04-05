@@ -99,6 +99,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    post:
+      summary: Forgot password
+      operationId: forgotPassword
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: Recovery email sent successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     put:
       summary: Update a user by ID
       operationId: updateUserById
@@ -166,6 +186,13 @@ components:
         password:
           type: string
           description: 'Password of the user'
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: 'Email address of the user'
+          example: 'john.doe@mail.com'
     AuthenticateResponse:
       type: object
       properties:
