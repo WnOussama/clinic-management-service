@@ -33,9 +33,9 @@ public interface UserWsMapper {
         return null;
     }
 
-    List<User> mapToUserResponseList(List<com.nexym.clinic.domain.user.model.User> userList);
-
     LoginCredential mapToCredentials(AuthenticateRequest authenticateRequest);
+
+    List<User> mapToUserResponseList(List<com.nexym.clinic.domain.user.model.User> userList);
 
     AuthenticateResponse mapToAuthenticateResponse(Authentication authenticate);
 }

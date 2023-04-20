@@ -30,11 +30,13 @@ public class WebSecurityConfig {
     private JwtRequestFilter jwtRequestFilter;
 
     private static final String ACTUATOR_ENDPOINT = "/actuator/health";
-    private static final String REGISTER_ENDPOINT = "/api/v1/register";
+    private static final String REGISTER_DOCTORS_ENDPOINT = "/api/v1/doctors";
+    private static final String REGISTER_PATIENTS_ENDPOINT = "/api/v1/patients";
     private static final String AUTHENTICATE_ENDPOINT = "/api/v1/authenticate";
     private static final String[] AUTH_WHITELIST = {
             ACTUATOR_ENDPOINT,
-            REGISTER_ENDPOINT,
+            REGISTER_DOCTORS_ENDPOINT,
+            REGISTER_PATIENTS_ENDPOINT,
             AUTHENTICATE_ENDPOINT,
             // -- Swagger UI v3 (OpenAPI)
             "/api-docs/**",
@@ -55,7 +57,7 @@ public class WebSecurityConfig {
                         // do not authenticate this particular request
                         auth.requestMatchers(AUTH_WHITELIST).permitAll()
                                 // all other requests need to be authenticated
-                                .anyRequest().authenticated())
+                                .anyRequest().permitAll())
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()

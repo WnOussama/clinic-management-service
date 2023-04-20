@@ -2,11 +2,9 @@ package com.nexym.clinic.resource.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexym.clinic.ClinicManagementServiceApplication;
-import com.nexym.clinic.api.model.UserRequest;
 import com.nexym.clinic.config.ClinicManagementExceptionHandler;
 import com.nexym.clinic.config.security.JwtProvider;
 import com.nexym.clinic.domain.user.UserService;
-import com.nexym.clinic.domain.user.model.UserRole;
 import com.nexym.clinic.resource.user.api.UserResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,21 +64,21 @@ class UserResourceTest {
 
     @Test
     void should_get_user_by_id_not_authenticated_fail() throws Exception {
-        mockMvc.perform(get(usersByIdUrl(2L))
+        mockMvc.perform(get(usersByIdUrl(523L))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void should_update_user_by_id_not_authenticated_fail() throws Exception {
-        mockMvc.perform(put(usersByIdUrl(2L))
+        mockMvc.perform(put(usersByIdUrl(523L))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void should_delete_user_by_id_not_authenticated_fail() throws Exception {
-        mockMvc.perform(delete(usersByIdUrl(2L))
+        mockMvc.perform(delete(usersByIdUrl(523L))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
@@ -107,7 +105,6 @@ class UserResourceTest {
                 .id(2L)
                 .firstName("John")
                 .lastName("Doe")
-                .role(UserRole.PATIENT)
                 .build());
         var token = jwtProvider.generateToken(new User(EMAIL_TEST,
                 PASSWORD_TEST,
@@ -124,7 +121,6 @@ class UserResourceTest {
                             "civility":null,
                             "firstName":"John",
                             "lastName":"Doe",
-                            "role":"PATIENT",
                             "email":null,
                             "phoneNumber":null,
                             "creationDate":null}
@@ -146,26 +142,6 @@ class UserResourceTest {
                         .header("Authorization", String.format("Bearer %s", token))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    void should_register_user_success() throws Exception {
-        when(userService.registerUser(any())).thenReturn(1L);
-        var request = new UserRequest().email("john.doe@mail.com")
-                .civility(UserRequest.CivilityEnum.MR)
-                .phoneNumber("0121348345")
-                .role(UserRequest.RoleEnum.PATIENT)
-                .firstName("John")
-                .lastName("Doe")
-                .password("myPassword");
-        mockMvc.perform(post(registerUserUrl())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated());
-    }
-
-    private String registerUserUrl() {
-        return "/api/v1/register";
     }
 
     private String usersByIdUrl(Long userId) {

@@ -1,7 +1,6 @@
 package com.nexym.clinic.infra.user.entity;
 
 import com.nexym.clinic.domain.user.model.Civility;
-import com.nexym.clinic.domain.user.model.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,10 +31,6 @@ public class UserEntity {
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
-
-    @Column(name = "role", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
 
     @Column(name = "phone_number")
     private String phoneNumber;

@@ -2,7 +2,6 @@ package com.nexym.clinic.domain.user;
 
 import com.nexym.clinic.config.security.JwtProvider;
 import com.nexym.clinic.domain.user.exception.UserNotFoundException;
-import com.nexym.clinic.domain.user.exception.UserValidationException;
 import com.nexym.clinic.domain.user.mapper.UserMapper;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.model.auth.Authentication;
@@ -47,21 +46,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long registerUser(User user) {
-        var errorList = user.applyValidations();
-        if (FormatUtil.isFilled(errorList)) {
-            throw new UserValidationException("Failed to validate user request", errorList);
-        } else {
-            var userEmail = user.getEmail();
-            if (userPersistence.existsByEmail(userEmail)) {
-                throw new UserValidationException(String.format("User with email '%s' already exists", userEmail));
-            }
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            return userPersistence.registerUser(user);
-        }
-    }
-
-    @Override
     public List<User> getUserList() {
         return userPersistence.getUserList();
     }
@@ -85,6 +69,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUserById(Long userId) {
+        if (userPersistence.getUserById(userId).isEmpty()) {
+            throw new UserNotFoundException(String.format("User with id '%d' not found", userId));
+        }
+        userPersistence.deleteById(userId);
+    }
+
+    @Override
     public User updateUserById(Long userId, User user) {
         User existingUser = userPersistence.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with id '%d' not found", userId)));
@@ -93,14 +85,6 @@ public class UserServiceImpl implements UserService {
             existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
         return userPersistence.save(existingUser);
-    }
-
-    @Override
-    public void deleteUserById(Long userId) {
-        if (userPersistence.getUserById(userId).isEmpty()) {
-            throw new UserNotFoundException(String.format("User with id '%d' not found", userId));
-        }
-        userPersistence.deleteById(userId);
     }
 
     private Authentication generateUserAuthentication(String email) {
