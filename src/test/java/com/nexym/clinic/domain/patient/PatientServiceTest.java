@@ -35,9 +35,9 @@ class PatientServiceTest {
                 "Toto2022");
 
         // When
-        var foundUser = patientService.registerPatient(patient);
+        var foundPatient = patientService.registerPatient(patient);
         // Then
-        Assertions.assertThat(foundUser).isEqualTo(1L);
+        Assertions.assertThat(foundPatient).isEqualTo(1L);
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.nexym.clinic.resource.patient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexym.clinic.ClinicManagementServiceApplication;
-import com.nexym.clinic.api.model.DoctorRequest;
+import com.nexym.clinic.api.model.PatientRequest;
 import com.nexym.clinic.config.ClinicManagementExceptionHandler;
 import com.nexym.clinic.domain.patient.PatientService;
 import com.nexym.clinic.resource.patient.api.PatientResource;
@@ -55,8 +55,8 @@ class PatientResourceTest {
     @Test
     void should_register_patient_success() throws Exception {
         when(patientService.registerPatient(any())).thenReturn(1L);
-        var request = new DoctorRequest().email("john.doe@mail.com")
-                .civility(DoctorRequest.CivilityEnum.MR)
+        var request = new PatientRequest().email("john.doe@mail.com")
+                .civility(PatientRequest.CivilityEnum.MR)
                 .phoneNumber("01122334455")
                 .firstName("John")
                 .lastName("Doe")
