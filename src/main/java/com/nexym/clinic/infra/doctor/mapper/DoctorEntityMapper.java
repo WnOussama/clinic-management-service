@@ -3,6 +3,7 @@ package com.nexym.clinic.infra.doctor.mapper;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
+import com.nexym.clinic.infra.user.entity.UserEntity;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
 
@@ -15,12 +16,16 @@ import java.util.List;
 )
 public interface DoctorEntityMapper {
 
-    @Mapping(target = "user.id", source = "userId")
+    @Mapping(target = "user", source = "doctorModel")
     @Mapping(target = "availabilities", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "rule.id", source = "ruleId")
     @Mapping(target = "speciality.id", source = "specialityId")
     DoctorEntity mapToEntity(Doctor doctorModel);
+
+    @Mapping(target = "modifiedDate", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    UserEntity mapToUserEntity(Doctor doctorModel);
 
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "specialityId", source = "speciality.id")

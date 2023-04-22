@@ -12,14 +12,12 @@ import org.mapstruct.*;
 )
 public interface PatientEntityMapper {
 
-    @Mapping(target = "user", source = "userId")
     @Mapping(target = "appointments", ignore = true)
+    @Mapping(target = "user", source = "patientModel")
     PatientEntity mapToEntity(Patient patientModel);
 
-    default UserEntity mapToUserEntity(Long id) {
-        var user = new UserEntity();
-        user.setId(id);
-        return user;
-    }
+    @Mapping(target = "modifiedDate", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    UserEntity mapToUserEntity(Patient patient);
 
 }

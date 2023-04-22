@@ -57,7 +57,7 @@ public class WebSecurityConfig {
                         // do not authenticate this particular request
                         auth.requestMatchers(AUTH_WHITELIST).permitAll()
                                 // all other requests need to be authenticated
-                                .anyRequest().permitAll())
+                                .anyRequest().authenticated())
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()

@@ -32,7 +32,7 @@ public class DoctorEntity {
     @JoinColumn(name = "rule_id", nullable = false)
     private RuleEntity rule;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 

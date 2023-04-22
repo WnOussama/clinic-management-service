@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +18,8 @@ import java.time.LocalDateTime;
 @Table(name = "cm_users")
 @EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
+
+    private static PasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cm_users_seq")
@@ -49,4 +53,7 @@ public class UserEntity {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
+    public void setPassword(String password) {
+        this.password = bCryptPasswordEncoder.encode(password);
+    }
 }
