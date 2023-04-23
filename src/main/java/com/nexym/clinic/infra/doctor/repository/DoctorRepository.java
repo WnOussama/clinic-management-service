@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class DoctorRepository implements DoctorPersistence {
@@ -18,7 +20,7 @@ public class DoctorRepository implements DoctorPersistence {
 
 
     @Override
-    public Long registerDoctor(Doctor doctor) {
+    public Long createOrUpdate(Doctor doctor) {
         var savedDoctor = doctorDao.save(doctorEntityMapper.mapToEntity(doctor));
         return savedDoctor.getId();
     }
@@ -33,6 +35,16 @@ public class DoctorRepository implements DoctorPersistence {
         var pageable = PageRequest.of(page, size);
         var doctorEntityList = doctorDao.findAll(pageable);
         return doctorEntityMapper.mapToModelList(doctorEntityList);
+    }
+
+    @Override
+    public Optional<Doctor> getDoctorById(Long doctorId) {
+        return doctorDao.findById(doctorId).map(doctorEntityMapper::mapToModel);
+    }
+
+    @Override
+    public void deleteDoctorById(Long doctorId) {
+        doctorDao.deleteById(doctorId);
     }
 
 }

@@ -13,8 +13,4 @@ public interface UserPersistence {
 
     List<User> getUserList();
 
-    User save(User user);
-
-    void deleteById(Long userId);
-
 }

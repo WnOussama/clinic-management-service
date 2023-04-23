@@ -13,7 +13,7 @@ class PatientModelTest {
 
     @Test
     void should_patient_validate_missing_first_name_fail() {
-        var patient = Patient.builder()
+        var patient = Patient.PatientBuilder()
                 .phoneNumber("01122334455")
                 .lastName("Doe")
                 .civility(Civility.MRS)
@@ -26,7 +26,7 @@ class PatientModelTest {
 
     @Test
     void should_patient_validate_missing_last_name_fail() {
-        var patient = Patient.builder()
+        var patient = Patient.PatientBuilder()
                 .phoneNumber("01122334455")
                 .firstName("John")
                 .civility(Civility.MRS)
@@ -39,7 +39,7 @@ class PatientModelTest {
 
     @Test
     void should_patient_validate_missing_all_required_attributes_fail() {
-        var patient = Patient.builder().build();
+        var patient = Patient.PatientBuilder().build();
         Assertions.assertThat(patient.applyValidations())
                 .isEqualTo(List.of("Civility should be filled",
                         "First name should be filled",

@@ -61,7 +61,7 @@ class PatientServiceTest {
     @Test
     void should_register_patient_missing_required_attribute_fail() {
         // When
-        ThrowableAssert.ThrowingCallable callable = () -> patientService.registerPatient(Patient.builder().build());
+        ThrowableAssert.ThrowingCallable callable = () -> patientService.registerPatient(Patient.PatientBuilder().build());
         // Then
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(PatientValidationException.class)
@@ -70,7 +70,7 @@ class PatientServiceTest {
 
     private static Patient getPatient(Civility civility, String firstName, String lastName, String phoneNumber, String email, String password) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return Patient.builder()
+        return Patient.PatientBuilder()
                 .id(1L)
                 .userId(1L)
                 .civility(civility)

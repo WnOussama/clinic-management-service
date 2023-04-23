@@ -4,11 +4,12 @@ import com.nexym.clinic.domain.availability.model.Availability;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class Appointment {
+public class Appointment implements Serializable {
 
     private Long id;
     private String prescription;

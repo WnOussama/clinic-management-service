@@ -8,9 +8,6 @@ import com.nexym.clinic.domain.user.model.auth.Authentication;
 import com.nexym.clinic.domain.user.model.auth.LoginCredential;
 import org.mapstruct.*;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
@@ -20,18 +17,12 @@ import java.util.List;
 )
 public interface UserWsMapper {
 
+    @Mapping(target = "id", source = "userId")
     User mapToApiModel(com.nexym.clinic.domain.user.model.User userModel);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     com.nexym.clinic.domain.user.model.User mapToUserModel(UserRequest userRequest);
-
-    default OffsetDateTime map(LocalDateTime date) {
-        if (date != null) {
-            return date.atOffset(ZoneOffset.UTC);
-        }
-        return null;
-    }
 
     LoginCredential mapToCredentials(AuthenticateRequest authenticateRequest);
 

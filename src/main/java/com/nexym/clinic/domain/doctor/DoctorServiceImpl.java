@@ -1,13 +1,14 @@
 package com.nexym.clinic.domain.doctor;
 
+import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.exception.DoctorValidationException;
+import com.nexym.clinic.domain.doctor.mapper.DoctorMapper;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
 import com.nexym.clinic.domain.rule.port.RulePersistence;
 import com.nexym.clinic.domain.speciality.port.SpecialityPersistence;
 import com.nexym.clinic.domain.user.exception.UserValidationException;
-import com.nexym.clinic.domain.user.port.UserPersistence;
 import com.nexym.clinic.utils.FormatUtil;
 import com.nexym.clinic.utils.exception.FunctionalException;
 import com.nexym.clinic.utils.exception.TechnicalException;
@@ -21,19 +22,15 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
     private DoctorPersistence doctorPersistence;
-
-    @Autowired
-    private UserPersistence userPersistence;
-
     @Autowired
     private RulePersistence rulePersistence;
-
     @Autowired
     private SpecialityPersistence specialityPersistence;
+    @Autowired
+    private DoctorMapper doctorMapper;
 
     @Override
     public Long registerDoctor(Doctor doctor) {
-
         var errorList = doctor.applyValidations();
         if (FormatUtil.isFilled(errorList)) {
             throw new DoctorValidationException("Failed to validate doctor request", errorList);
@@ -42,8 +39,32 @@ public class DoctorServiceImpl implements DoctorService {
             Long ruleId = checkIfGlobalRuleAlreadyExists();
             checkIfSpecialityAlreadyExists(doctor.getSpecialityId());
             doctor.setRuleId(ruleId);
-            return doctorPersistence.registerDoctor(doctor);
+            return doctorPersistence.createOrUpdate(doctor);
         }
+    }
+
+    @Override
+    public DoctorList getDoctorList(Integer page, Integer size) {
+        return doctorPersistence.getDoctorList(page, size);
+    }
+
+    @Override
+    public Doctor getDoctorById(Long doctorId) {
+        return doctorPersistence.getDoctorById(doctorId)
+                .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%s' does not exist", doctorId)));
+    }
+
+    @Override
+    public void deleteDoctorById(Long doctorId) {
+        getDoctorById(doctorId);
+        doctorPersistence.deleteDoctorById(doctorId);
+    }
+
+    @Override
+    public void updateDoctorById(Long doctorId, Doctor request) {
+        var existingDoctor =  getDoctorById(doctorId);
+        doctorMapper.update(existingDoctor, request);
+        doctorPersistence.createOrUpdate(existingDoctor);
     }
 
     private void checkIfSpecialityAlreadyExists(Long specialityId) {
@@ -61,13 +82,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     private void checkIfUserAlreadyExists(Doctor doctor) {
         var doctorEmail = doctor.getEmail();
-        if (userPersistence.getUserByEmail(doctorEmail).isPresent()) {
+        if (doctorPersistence.existsByUserEmail(doctorEmail)) {
             throw new UserValidationException(String.format("User with email '%s' already exists", doctorEmail));
         }
-    }
-
-    @Override
-    public DoctorList getDoctorList(Integer page, Integer size) {
-        return doctorPersistence.getDoctorList(page, size);
     }
 }

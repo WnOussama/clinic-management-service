@@ -10,4 +10,9 @@ public interface DoctorService {
     DoctorList getDoctorList(Integer page, Integer size);
 
 
+    void deleteDoctorById(Long doctorId);
+
+    Doctor getDoctorById(Long doctorId);
+
+    void updateDoctorById(Long doctorId, Doctor mapToDoctorModel);
 }

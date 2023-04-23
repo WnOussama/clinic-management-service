@@ -23,6 +23,7 @@ public interface DoctorEntityMapper {
     @Mapping(target = "speciality.id", source = "specialityId")
     DoctorEntity mapToEntity(Doctor doctorModel);
 
+    @Mapping(target = "id", source = "userId")
     @Mapping(target = "modifiedDate", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     UserEntity mapToUserEntity(Doctor doctorModel);

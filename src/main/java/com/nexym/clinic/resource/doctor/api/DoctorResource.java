@@ -1,6 +1,7 @@
 package com.nexym.clinic.resource.doctor.api;
 
 import com.nexym.clinic.api.DoctorsApi;
+import com.nexym.clinic.api.model.Doctor;
 import com.nexym.clinic.api.model.DoctorListResponse;
 import com.nexym.clinic.api.model.DoctorRequest;
 import com.nexym.clinic.domain.doctor.DoctorService;
@@ -29,5 +30,22 @@ public class DoctorResource implements DoctorsApi {
     @Override
     public ResponseEntity<DoctorListResponse> searchDoctors(Integer page, Integer size) {
         return ResponseEntity.ok(doctorWsMapper.mapToDoctorResponseList(doctorService.getDoctorList(page, size)));
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteDoctorById(Long doctorId) {
+        doctorService.deleteDoctorById(doctorId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Doctor> getDoctorById(Long doctorId) {
+        return ResponseEntity.ok(doctorWsMapper.map(doctorService.getDoctorById(doctorId)));
+    }
+
+    @Override
+    public ResponseEntity<Doctor> updateDoctorById(Long doctorId, DoctorRequest doctorRequest) {
+        doctorService.updateDoctorById(doctorId, doctorWsMapper.mapToDoctorModel(doctorRequest));
+        return ResponseEntity.noContent().build();
     }
 }

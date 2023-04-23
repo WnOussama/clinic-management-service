@@ -76,6 +76,88 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /api/v1/doctors/{doctorId}:
+    get:
+      summary: Retrieve info for a specific doctor
+      operationId: getDoctorById
+      tags:
+        - Doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a doctor by ID
+      operationId: updateDoctorById
+      tags:
+        - Doctors
+      parameters:
+        - name: doctorId
+          in: path
+          description: ID of the doctor to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorRequest'
+      responses:
+        '204':
+          description: Doctor updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Doctor'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a specific doctor
+      operationId: deleteDoctorById
+      tags:
+        - Doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Doctor deleted successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/v1/patients:
     post:
       summary: Register a new patient
@@ -91,6 +173,88 @@ paths:
       responses:
         '201':
           description: New patient was created successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /api/v1/patients/{patientId}:
+    get:
+      summary: Retrieve info for a specific patient
+      operationId: getPatientById
+      tags:
+        - Patients
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          description: ID of the patient to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a patient by ID
+      operationId: updatePatientById
+      tags:
+        - Patients
+      parameters:
+        - name: patientId
+          in: path
+          description: ID of the patient to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientRequest'
+      responses:
+        '204':
+          description: Patient updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a specific patient
+      operationId: deletePatientById
+      tags:
+        - Patients
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          description: ID of the patient to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Patient deleted successfully
         default:
           description: unexpected error
           content:
@@ -224,88 +388,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /api/v1/users/{userId}:
-    get:
-      summary: Retrieve info for a specific user
-      operationId: getUserById
-      tags:
-        - Users
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: ID of the user to retrieve
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Expected response to a valid request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    put:
-      summary: Update a user by ID
-      operationId: updateUserById
-      tags:
-        - Users
-      parameters:
-        - name: userId
-          in: path
-          description: ID of the user to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRequest'
-      responses:
-        '200':
-          description: User updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    delete:
-      summary: Delete a specific user
-      operationId: deleteUserById
-      tags:
-        - Users
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: ID of the user to delete
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: User deleted successfully
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
 components:
   schemas:
     Availability:
@@ -425,9 +507,6 @@ components:
           type: string
         phoneNumber:
           type: string
-        creationDate:
-          type: string
-          format: date-time
     UserListResponse:
       type: array
       items:

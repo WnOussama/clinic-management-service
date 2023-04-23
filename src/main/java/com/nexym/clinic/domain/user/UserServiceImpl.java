@@ -2,20 +2,16 @@ package com.nexym.clinic.domain.user;
 
 import com.nexym.clinic.config.security.JwtProvider;
 import com.nexym.clinic.domain.user.exception.UserNotFoundException;
-import com.nexym.clinic.domain.user.mapper.UserMapper;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.model.auth.Authentication;
 import com.nexym.clinic.domain.user.model.auth.LoginCredential;
 import com.nexym.clinic.domain.user.port.UserPersistence;
-import com.nexym.clinic.utils.FormatUtil;
 import com.nexym.clinic.utils.exception.AccessDeniedException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,13 +23,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
     private UserPersistence userPersistence;
-
-    @Autowired
-    private PasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private JwtProvider jwtUtils;
@@ -62,40 +52,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        com.nexym.clinic.domain.user.model.User user = userPersistence.getUserByEmail(email)
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userPersistence.getUserByEmail(email)
                 .orElseThrow(() -> new AccessDeniedException("Access to this resource is denied"));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
-    }
-
-    @Override
-    public void deleteUserById(Long userId) {
-        if (userPersistence.getUserById(userId).isEmpty()) {
-            throw new UserNotFoundException(String.format("User with id '%d' not found", userId));
-        }
-        userPersistence.deleteById(userId);
-    }
-
-    @Override
-    public User updateUserById(Long userId, User user) {
-        User existingUser = userPersistence.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with id '%d' not found", userId)));
-        userMapper.merge(existingUser, user);
-        if (FormatUtil.isFilled(user.getPassword())) {
-            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        }
-        return userPersistence.save(existingUser);
     }
 
     private Authentication generateUserAuthentication(String email) {
-        User userFromDb = userPersistence.getUserByEmail(email)
-                .orElseThrow(() -> new AccessDeniedException("Access to this resource is denied"));
         var user = loadUserByUsername(email);
         var token = jwtUtils.generateToken(user);
         var expirationDate = jwtUtils.getExpirationDateFromToken(token);
         var now = new Date();
         return Authentication.builder()
-                .id(userFromDb.getId())
+                .id(user.getUserId())
                 .token(token)
                 .expiresIn((expirationDate.getTime() - now.getTime()) / 1000)
                 .build();

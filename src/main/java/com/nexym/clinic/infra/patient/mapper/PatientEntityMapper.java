@@ -20,4 +20,13 @@ public interface PatientEntityMapper {
     @Mapping(target = "creationDate", ignore = true)
     UserEntity mapToUserEntity(Patient patient);
 
+    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "civility", source = "user.civility")
+    @Mapping(target = "firstName", source = "user.firstName")
+    @Mapping(target = "lastName", source = "user.lastName")
+    @Mapping(target = "email", source = "user.email")
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "phoneNumber", source = "user.phoneNumber")
+    @Mapping(target = "creationDate", source = "user.creationDate")
+    Patient mapToModel(PatientEntity patientEntity);
 }

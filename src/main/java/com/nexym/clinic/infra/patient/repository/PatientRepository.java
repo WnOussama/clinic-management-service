@@ -7,6 +7,8 @@ import com.nexym.clinic.infra.patient.mapper.PatientEntityMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class PatientRepository implements PatientPersistence {
@@ -15,7 +17,7 @@ public class PatientRepository implements PatientPersistence {
     private final PatientEntityMapper patientEntityMapper;
 
     @Override
-    public Long registerPatient(Patient patient) {
+    public Long createOrUpdate(Patient patient) {
         var savedPatient = patientDao.save(patientEntityMapper.mapToEntity(patient));
         return savedPatient.getId();
     }
@@ -23,5 +25,15 @@ public class PatientRepository implements PatientPersistence {
     @Override
     public boolean existsByUserEmail(String email) {
         return patientDao.existsByUserEmail(email);
+    }
+
+    @Override
+    public Optional<Patient> getPatientById(Long patientId) {
+        return patientDao.findById(patientId).map(patientEntityMapper::mapToModel);
+    }
+
+    @Override
+    public void deleteById(Long patientId) {
+        patientDao.deleteById(patientId);
     }
 }

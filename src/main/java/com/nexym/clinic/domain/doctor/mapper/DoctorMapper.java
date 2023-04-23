@@ -1,7 +1,6 @@
 package com.nexym.clinic.domain.doctor.mapper;
 
 import com.nexym.clinic.domain.doctor.model.Doctor;
-import com.nexym.clinic.domain.user.model.User;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
@@ -12,6 +11,6 @@ import org.mapstruct.*;
 )
 public interface DoctorMapper {
 
-    User mapToUser(Doctor doctor);
-
+    @Mapping(target = "id", ignore = true)
+    void update(@MappingTarget Doctor existingDoctor, Doctor request);
 }
