@@ -126,6 +126,15 @@ class UserServiceTest {
                 .email("jessie.doe@mail.com")
                 .password("$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W")
                 .creationDate(LocalDateTime.parse("2023-04-06 03:16:54", formatter))
+                .build(), User.builder()
+                .userId(3L)
+                .civility(Civility.MR)
+                .firstName("Ramsey")
+                .lastName("Foden")
+                .phoneNumber("01122334455")
+                .email("ramsey.foden@mail.com")
+                .password("$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W")
+                .creationDate(LocalDateTime.parse("2023-04-23 20:55:54", formatter))
                 .build()));
     }
 

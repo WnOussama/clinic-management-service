@@ -8,7 +8,6 @@ import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
 import com.nexym.clinic.domain.rule.port.RulePersistence;
 import com.nexym.clinic.utils.FormatUtil;
-import com.nexym.clinic.utils.exception.FunctionalException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,18 +41,18 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     private void validateNewAvailabilityDateRange(Availability availability, Doctor doctor) {
         var now = LocalDateTime.now();
         if (availability.getStartDate().isBefore(now)) {
-            throw new FunctionalException(String.format("Availability start date '%s' is in the past", availability.getStartDate()));
+            throw new DoctorValidationException(String.format("Availability start date '%s' is in the past", availability.getStartDate()));
         }
         if (availability.getEndDate().isBefore(availability.getStartDate())) {
-            throw new FunctionalException(String.format("Availability start date '%s' is before the end date '%s'",
+            throw new DoctorValidationException(String.format("Availability end date '%s' is before the start date '%s'",
                     availability.getStartDate(),
                     availability.getEndDate()));
         }
         // validate requested date hours with global rule
         var rule = rulePersistence.findGlobalRule()
-                .orElseThrow(() -> new FunctionalException("Global clinic rule does not exist"));
+                .orElseThrow(() -> new DoctorValidationException("Global clinic rule does not exist"));
         if (doNotRespectHoursRules(availability, rule.getStartHour(), rule.getStartBreakHour(), rule.getEndBreakHour(), rule.getEndHour())) {
-            throw new FunctionalException(String.format("Availability start date '%s' and end date '%s' do not respect global rule", availability.getStartDate(), availability.getEndDate()));
+            throw new DoctorValidationException(String.format("Availability start date '%s' and end date '%s' do not respect global rule", availability.getStartDate(), availability.getEndDate()));
         }
 
         checkOverlappingWithExistingAvailabilities(availability, doctor.getAvailabilities());
