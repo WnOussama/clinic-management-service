@@ -1,0 +1,166 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-04-04-manage-users-structure
+      author: oussamaouannassi@gmail.com
+      changes:
+        - addNotNullConstraint:
+            tableName: cm_users
+            columnName: id
+            columnDataType: bigint
+        - addPrimaryKey:
+            tableName: cm_users
+            columnNames: id
+            constraintName: pk_users
+        - dropColumn:
+            columnName: role
+            tableName: cm_users
+        #CM_SPECIALITIES: Defines doctors' speciality fields
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_specialities_seq
+            startValue: 1
+        - createTable:
+            tableName: cm_specialities
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar2
+              - column:
+                  name: appointment_duration
+                  type: bigint
+        #CM_RULES: Clinic starting, breaking and ending time
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_rules_seq
+            startValue: 1
+        - createTable:
+            tableName: cm_rules
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: start_hour
+                  type: bigint
+              - column:
+                  name: end_hour
+                  type: bigint
+              - column:
+                  name: start_break_hour
+                  type: bigint
+              - column:
+                  name: end_break_hour
+                  type: bigint
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_doctors_seq
+            startValue: 1
+        - createTable:
+            tableName: cm_doctors
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_doctors_users
+                    references: cm_users(id)
+                    unique: true
+              - column:
+                  name: address
+                  type: varchar2
+              - column:
+                  name: speciality_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_doctors_specialities
+                    references: cm_specialities(id)
+              - column:
+                  name: rule_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_doctors_rules
+                    references: cm_rules(id)
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_patients_seq
+            startValue: 1
+        - createTable:
+            tableName: cm_patients
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_users
+                    references: cm_users(id)
+                    unique: true
+
+      rollback:
+        - dropNotNullConstraint:
+            columnName: id
+            tableName: cm_users
+        - dropPrimaryKey:
+            constraintName: pk_users
+            tableName: cm_users
+        - addColumn:
+            tableName: cm_users
+            columns:
+              - column:
+                  name: role
+                  type: varchar2
+                  defaultValue: "PATIENT"
+                  constraints:
+                    nullable: false
+        - dropSequence:
+          sequenceName: cm_specialities_seq
+        - dropTable:
+          tableName: cm_specialities
+        - dropSequence:
+          sequenceName: cm_rules_seq
+        - dropTable:
+          tableName: cm_rules
+        - dropSequence:
+          sequenceName: cm_doctors_seq
+        - dropTable:
+          tableName: cm_doctors
+        - dropSequence:
+          sequenceName: cm_patients_seq
+        - dropTable:
+          tableName: cm_patients

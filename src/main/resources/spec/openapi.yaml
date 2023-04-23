@@ -6,27 +6,262 @@ info:
   license:
     name: Nexym
 paths:
-  /api/v1/register:
+  /api/v1/doctors:
     post:
-      summary: Register a new user
-      operationId: registerUser
+      summary: Register a new doctor
+      operationId: registerDoctor
       tags:
-        - Users
+        - Doctors
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/DoctorRequest'
       responses:
         '201':
-          description: New user was created successfully
+          description: New doctor was created successfully
         default:
           description: unexpected error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    get:
+      summary: Retrieve a list of doctors
+      operationId: searchDoctors
+      tags:
+        - Doctors
+      parameters:
+        - name: page
+          in: query
+          description: Page index, starts at 0
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Number of items per page, default is 10
+          required: false
+          schema:
+            type: integer
+            default: 10
+#        - name: speciality
+#          in: query
+#          description: Filter by speciality
+#          required: false
+#          schema:
+#            $ref: "#/components/schemas/Speciality"
+#        - name: availability
+#          in: query
+#          description: Filter by availability
+#          required: false
+#          schema:
+#            type: string
+#            enum:
+#              - 3 days
+#              - 5 days
+#              - 1 week
+      responses:
+        '200':
+          description: List of doctors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorListResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v1/doctors/{doctorId}:
+    get:
+      summary: Retrieve info for a specific doctor
+      operationId: getDoctorById
+      tags:
+        - Doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a doctor by ID
+      operationId: updateDoctorById
+      tags:
+        - Doctors
+      parameters:
+        - name: doctorId
+          in: path
+          description: ID of the doctor to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorRequest'
+      responses:
+        '204':
+          description: Doctor updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Doctor'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a specific doctor
+      operationId: deleteDoctorById
+      tags:
+        - Doctors
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Doctor deleted successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v1/patients:
+    post:
+      summary: Register a new patient
+      operationId: registerPatient
+      tags:
+        - Patients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientRequest'
+      responses:
+        '201':
+          description: New patient was created successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /api/v1/patients/{patientId}:
+    get:
+      summary: Retrieve info for a specific patient
+      operationId: getPatientById
+      tags:
+        - Patients
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          description: ID of the patient to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a patient by ID
+      operationId: updatePatientById
+      tags:
+        - Patients
+      parameters:
+        - name: patientId
+          in: path
+          description: ID of the patient to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientRequest'
+      responses:
+        '204':
+          description: Patient updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a specific patient
+      operationId: deletePatientById
+      tags:
+        - Patients
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          description: ID of the patient to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Patient deleted successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/v1/authenticate:
     post:
       summary: Authenticate an existing user
@@ -52,6 +287,87 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  /api/v1/specialities:
+    get:
+      summary: Retrieve all specialities
+      operationId: getSpecialities
+      tags:
+        - Specialities
+      responses:
+        '200':
+          description: List of specialities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpecialityListResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v1/doctors/{doctorId}/availabilities:
+    post:
+      summary: Add a new availability for doctor
+      operationId: addNewAvailability
+      tags:
+        - Availabilities
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AvailabilityRequest'
+      responses:
+        '200':
+          description: Availability added successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v1/patients/{patientId}/appointments:
+    post:
+      summary: Add a new appointment for patient
+      operationId: addNewAppointment
+      tags:
+        - Appointments
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          description: ID of the patient
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentRequest'
+      responses:
+        '200':
+          description: Appointment added successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/v1/users:
     get:
       summary: Retrieve all users
@@ -72,90 +388,48 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /api/v1/users/{userId}:
-    get:
-      summary: Retrieve info for a specific user
-      operationId: getUserById
-      tags:
-        - Users
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: The id of the user to retrieve
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Expected response to a valid request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    put:
-      summary: Update a user by ID
-      operationId: updateUserById
-      tags:
-        - Users
-      parameters:
-        - name: userId
-          in: path
-          description: ID of the user to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRequest'
-      responses:
-        '200':
-          description: User updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    delete:
-      summary: Delete a specific user
-      operationId: deleteUserById
-      tags:
-        - Users
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: The id of the user to retrieve
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: User deleted successfully
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
 components:
   schemas:
+    Availability:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+    AvailabilityRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+    AvailabilityListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Availability"
+    Speciality:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        appointmentDuration:
+          type: integer
+          format: int64
+    SpecialityListResponse:
+            type: array
+            items:
+              $ref: "#/components/schemas/Speciality"
     AuthenticateRequest:
       type: object
       properties:
@@ -196,13 +470,6 @@ components:
           type: string
           description: 'Last name of the user'
           example: 'Doe'
-        role:
-          type: string
-          description: 'Role of the user'
-          example: 'PATIENT'
-          enum:
-            - DOCTOR
-            - PATIENT
         email:
           type: string
           description: 'Email address of the user'
@@ -214,10 +481,6 @@ components:
         password:
           type: string
           description: 'Password of the user'
-    UserListResponse:
-      type: array
-      items:
-        $ref: "#/components/schemas/User"
     User:
       type: object
       properties:
@@ -234,16 +497,184 @@ components:
           type: string
         lastName:
           type: string
-        role:
-          type: string
-          enum:
-            - DOCTOR
-            - PATIENT
         email:
           type: string
         phoneNumber:
           type: string
+    UserListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    DoctorRequest:
+      type: object
+      properties:
+        civility:
+          type: string
+          description: 'Civility of the doctor'
+          example: 'MRS'
+          enum:
+            - MR
+            - MS
+            - MRS
+        firstName:
+          type: string
+          description: 'First name of the doctor'
+          example: 'Jessie'
+        lastName:
+          type: string
+          description: 'Last name of the doctor'
+          example: 'Doe'
+        email:
+          type: string
+          description: 'Email address of the doctor'
+          example: 'jessie.doe@mail.com'
+        phoneNumber:
+          type: string
+          description: 'Phone number of the doctor'
+          example: '0672134312'
+        address:
+          type: string
+          description: 'Address of the doctor'
+          example: '0664124312'
+        password:
+          type: string
+          description: 'Password of the doctor'
+        specialityId:
+          type: integer
+          format: int64
+          description: 'Speciality of the doctor'
+          example: 1
+    Doctor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        civility:
+          type: string
+          enum:
+            - MR
+            - MS
+            - MRS
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        address:
+          type: string
+        specialityId:
+          type: integer
+          format: int64
+        availabilities:
+          $ref: "#/components/schemas/AvailabilityListResponse"
         creationDate:
+          type: string
+          format: date-time
+    DoctorListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Doctor"
+        first:
+          type: boolean
+        last:
+          type: boolean
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+    PatientRequest:
+      type: object
+      properties:
+        civility:
+          type: string
+          description: 'Civility of the patient'
+          example: 'MR'
+          enum:
+            - MR
+            - MS
+            - MRS
+        firstName:
+          type: string
+          description: 'First name of the patient'
+          example: 'John'
+        lastName:
+          type: string
+          description: 'Last name of the patient'
+          example: 'Doe'
+        email:
+          type: string
+          description: 'Email address of the patient'
+          example: 'john.doe@mail.com'
+        phoneNumber:
+          type: string
+          description: 'Phone number of the patient'
+          example: '0664124312'
+        password:
+          type: string
+          description: 'Password of the doctor'
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        civility:
+          type: string
+          enum:
+            - MR
+            - MS
+            - MRS
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        appointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"
+        creationDate:
+          type: string
+          format: date-time
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - PENDING
+            - DONE
+        prescription:
+          type: string
+        appointmentDate:
+          type: string
+          format: date-time
+    AppointmentRequest:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+          format: int64
+        appointmentDate:
           type: string
           format: date-time
     Error:

@@ -30,11 +30,15 @@ public class WebSecurityConfig {
     private JwtRequestFilter jwtRequestFilter;
 
     private static final String ACTUATOR_ENDPOINT = "/actuator/health";
-    private static final String REGISTER_ENDPOINT = "/api/v1/register";
+    private static final String REGISTER_DOCTORS_ENDPOINT = "/api/v1/doctors";
+    private static final String REGISTER_PATIENTS_ENDPOINT = "/api/v1/patients";
+    private static final String DOCTOR_SPECIALITIES_ENDPOINT = "/api/v1/specialities";
     private static final String AUTHENTICATE_ENDPOINT = "/api/v1/authenticate";
     private static final String[] AUTH_WHITELIST = {
             ACTUATOR_ENDPOINT,
-            REGISTER_ENDPOINT,
+            REGISTER_DOCTORS_ENDPOINT,
+            DOCTOR_SPECIALITIES_ENDPOINT,
+            REGISTER_PATIENTS_ENDPOINT,
             AUTHENTICATE_ENDPOINT,
             // -- Swagger UI v3 (OpenAPI)
             "/api-docs/**",

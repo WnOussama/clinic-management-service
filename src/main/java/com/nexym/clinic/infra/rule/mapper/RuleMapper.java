@@ -1,6 +1,7 @@
-package com.nexym.clinic.domain.user.mapper;
+package com.nexym.clinic.infra.rule.mapper;
 
-import com.nexym.clinic.domain.user.model.User;
+import com.nexym.clinic.domain.rule.model.Rule;
+import com.nexym.clinic.infra.rule.entity.RuleEntity;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
@@ -9,11 +10,7 @@ import org.mapstruct.*;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface UserMapper {
+public interface RuleMapper {
 
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "creationDate", ignore = true)
-    void merge(@MappingTarget User userFromDb, User userRequest);
-
+    Rule map(RuleEntity ruleEntity);
 }
