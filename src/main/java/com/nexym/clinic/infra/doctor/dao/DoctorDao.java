@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DoctorDao extends JpaRepository<DoctorEntity, Long>{
-
-    boolean existsByUserEmail(String email);
+public interface DoctorDao extends JpaRepository<DoctorEntity, Long> {
 
 }
