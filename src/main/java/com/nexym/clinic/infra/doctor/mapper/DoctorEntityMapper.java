@@ -3,6 +3,7 @@ package com.nexym.clinic.infra.doctor.mapper;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
+import com.nexym.clinic.infra.speciality.entity.SpecialityEntity;
 import com.nexym.clinic.infra.user.entity.UserEntity;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface DoctorEntityMapper {
@@ -23,7 +25,7 @@ public interface DoctorEntityMapper {
     @Mapping(target = "speciality.id", source = "specialityId")
     DoctorEntity mapToEntity(Doctor doctorModel);
 
-    @Mapping(target = "id", source = "userId")
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     UserEntity mapToUserEntity(Doctor doctorModel);
@@ -58,4 +60,23 @@ public interface DoctorEntityMapper {
                 .build();
     }
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "rule", ignore = true)
+    @Mapping(target = "user.id", ignore = true)
+    @Mapping(target = "user.creationDate", ignore = true)
+    @Mapping(target = "user.modifiedDate", ignore = true)
+    @Mapping(target = "speciality", source = "specialityId")
+    @Mapping(target = "user.firstName", source = "firstName")
+    @Mapping(target = "user.lastName", source = "lastName")
+    @Mapping(target = "user.civility", source = "civility")
+    @Mapping(target = "user.email", source = "email")
+    @Mapping(target = "user.password", source = "password")
+    @Mapping(target = "user.phoneNumber", source = "phoneNumber")
+    void update(@MappingTarget DoctorEntity existingDoctor, Doctor updateRequest);
+
+    default SpecialityEntity map(Long specialityId) {
+        var speciality = new SpecialityEntity();
+        speciality.setId(specialityId);
+        return speciality;
+    }
 }

@@ -1,5 +1,6 @@
 package com.nexym.clinic.infra.patient.repository;
 
+import com.nexym.clinic.domain.patient.exception.PatientNotFoundException;
 import com.nexym.clinic.domain.patient.model.Patient;
 import com.nexym.clinic.domain.patient.port.PatientPersistence;
 import com.nexym.clinic.infra.patient.dao.PatientDao;
@@ -17,7 +18,7 @@ public class PatientRepository implements PatientPersistence {
     private final PatientEntityMapper patientEntityMapper;
 
     @Override
-    public Long createOrUpdate(Patient patient) {
+    public Long save(Patient patient) {
         var savedPatient = patientDao.save(patientEntityMapper.mapToEntity(patient));
         return savedPatient.getId();
     }
@@ -35,5 +36,13 @@ public class PatientRepository implements PatientPersistence {
     @Override
     public void deleteById(Long patientId) {
         patientDao.deleteById(patientId);
+    }
+
+    @Override
+    public void updatePatient(Long id, Patient updateRequest) {
+        var existingPatient = patientDao.findById(id)
+                .orElseThrow(() -> new PatientNotFoundException(String.format("Patient with id '%s' does not exist", id)));
+        patientEntityMapper.update(existingPatient, updateRequest);
+        patientDao.save(existingPatient);
     }
 }

@@ -2,7 +2,6 @@ package com.nexym.clinic.domain.doctor;
 
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.exception.DoctorValidationException;
-import com.nexym.clinic.domain.doctor.mapper.DoctorMapper;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
@@ -26,8 +25,6 @@ public class DoctorServiceImpl implements DoctorService {
     private RulePersistence rulePersistence;
     @Autowired
     private SpecialityPersistence specialityPersistence;
-    @Autowired
-    private DoctorMapper doctorMapper;
 
     @Override
     public Long registerDoctor(Doctor doctor) {
@@ -39,7 +36,7 @@ public class DoctorServiceImpl implements DoctorService {
             Long ruleId = checkIfGlobalRuleAlreadyExists();
             checkIfSpecialityAlreadyExists(doctor.getSpecialityId());
             doctor.setRuleId(ruleId);
-            return doctorPersistence.createOrUpdate(doctor);
+            return doctorPersistence.save(doctor);
         }
     }
 
@@ -61,10 +58,12 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void updateDoctorById(Long doctorId, Doctor request) {
-        var existingDoctor =  getDoctorById(doctorId);
-        doctorMapper.update(existingDoctor, request);
-        doctorPersistence.createOrUpdate(existingDoctor);
+    public void updateDoctorById(Long doctorId, Doctor updateRequest) {
+        var specialityId = updateRequest.getSpecialityId();
+        if (specialityId != null) {
+            checkIfSpecialityAlreadyExists(specialityId);
+        }
+        doctorPersistence.updateDoctor(doctorId, updateRequest);
     }
 
     private void checkIfSpecialityAlreadyExists(Long specialityId) {

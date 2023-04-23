@@ -14,5 +14,5 @@ public interface DoctorService {
 
     Doctor getDoctorById(Long doctorId);
 
-    void updateDoctorById(Long doctorId, Doctor mapToDoctorModel);
+    void updateDoctorById(Long doctorId, Doctor updateRequest);
 }
