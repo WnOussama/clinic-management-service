@@ -13,6 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class DoctorList extends PageModel<Doctor> {
 
+    @SuppressWarnings({"java:S107", "constructor not too much complex"})
     @Builder
     public DoctorList(List<Doctor> items,
                       Integer totalPages,

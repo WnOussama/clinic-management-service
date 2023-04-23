@@ -21,6 +21,7 @@ public class Doctor extends User {
     private String address;
     private List<Availability> availabilities;
 
+    @SuppressWarnings({"java:S107", "constructor not too much complex"})
     @Builder(builderMethodName = "DoctorBuilder")
     public Doctor(Long id,
                   Long ruleId,

@@ -16,6 +16,7 @@ public class Patient extends User {
     private Long id;
     private List<Appointment> appointments;
 
+    @SuppressWarnings({"java:S107", "constructor not too much complex"})
     @Builder(builderMethodName = "PatientBuilder")
     public Patient(Long id,
                    Long userId,
