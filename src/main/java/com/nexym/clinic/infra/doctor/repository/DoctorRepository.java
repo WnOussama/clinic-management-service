@@ -5,6 +5,7 @@ import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
 import com.nexym.clinic.infra.doctor.dao.DoctorDao;
+import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
 import com.nexym.clinic.infra.doctor.mapper.DoctorEntityMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +22,18 @@ public class DoctorRepository implements DoctorPersistence {
 
 
     @Override
-    public Long save(Doctor doctor) {
-        var savedDoctor = doctorDao.save(doctorEntityMapper.mapToEntity(doctor));
-        return savedDoctor.getId();
+    public Long createOrUpdate(Doctor doctor) {
+        DoctorEntity doctorEntity;
+        if (doctor.getId() != null) { // update case
+            var existingDoctor = doctorDao.findById(doctor.getId())
+                    .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%s' does not exist", doctor.getId())));
+            doctorEntityMapper.update(existingDoctor, doctor);
+            doctorEntity = doctorDao.save(existingDoctor);
+        } else {
+            // new doctor instance
+            doctorEntity = doctorDao.save(doctorEntityMapper.mapToEntity(doctor));
+        }
+        return doctorEntity.getId();
     }
 
     @Override
@@ -47,13 +57,4 @@ public class DoctorRepository implements DoctorPersistence {
     public void deleteDoctorById(Long doctorId) {
         doctorDao.deleteById(doctorId);
     }
-
-    @Override
-    public void updateDoctor(Long id, Doctor updateRequest) {
-        var existingDoctor = doctorDao.findById(id)
-                .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%s' does not exist", id)));
-        doctorEntityMapper.update(existingDoctor, updateRequest);
-        doctorDao.save(existingDoctor);
-    }
-
 }

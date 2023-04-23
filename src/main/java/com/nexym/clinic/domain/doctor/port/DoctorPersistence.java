@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface DoctorPersistence {
 
-    Long save(Doctor doctor);
+    Long createOrUpdate(Doctor doctor);
 
     boolean existsByUserEmail(String email);
 
@@ -16,6 +16,4 @@ public interface DoctorPersistence {
     Optional<Doctor> getDoctorById(Long doctorId);
 
     void deleteDoctorById(Long doctorId);
-
-    void updateDoctor(Long doctorId, Doctor updateRequest);
 }

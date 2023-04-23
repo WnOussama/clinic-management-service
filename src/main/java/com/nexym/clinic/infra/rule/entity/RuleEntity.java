@@ -18,18 +18,18 @@ public class RuleEntity {
 
     @Column(name = "start_hour", nullable = false)
     @CreatedDate
-    private Long startHour;
+    private Integer startHour;
 
     @Column(name = "end_hour", nullable = false)
     @CreatedDate
-    private Long endHour;
+    private Integer endHour;
 
     @Column(name = "start_break_hour", nullable = false)
     @CreatedDate
-    private Long startBreakHour;
+    private Integer startBreakHour;
 
     @Column(name = "end_break_hour", nullable = false)
     @CreatedDate
-    private Long endBreakHour;
+    private Integer endBreakHour;
 
 }

@@ -27,7 +27,7 @@ public class PatientServiceImpl implements PatientService {
             if (patientPersistence.existsByUserEmail(patientEmail)) {
                 throw new UserValidationException(String.format("User with email '%s' already exists", patientEmail));
             }
-            return patientPersistence.save(patient);
+            return patientPersistence.createOrUpdate(patient);
         }
     }
 
@@ -45,7 +45,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void updatePatientById(Long patientId, Patient request) {
-        patientPersistence.updatePatient(patientId, request);
-
+        request.setId(patientId);
+        patientPersistence.createOrUpdate(request);
     }
 }

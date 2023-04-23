@@ -1,7 +1,9 @@
 package com.nexym.clinic.infra.doctor.mapper;
 
+import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
+import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
 import com.nexym.clinic.infra.speciality.entity.SpecialityEntity;
 import com.nexym.clinic.infra.user.entity.UserEntity;
@@ -59,6 +61,11 @@ public interface DoctorEntityMapper {
                 .totalPages(page.getTotalPages())
                 .build();
     }
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "modifiedDate", ignore = true)
+    AvailabilityEntity map(Availability availability);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "rule", ignore = true)

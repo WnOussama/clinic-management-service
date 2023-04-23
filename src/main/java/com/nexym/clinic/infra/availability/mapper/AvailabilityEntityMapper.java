@@ -15,6 +15,7 @@ public interface AvailabilityEntityMapper {
 
     Availability mapToModel(AvailabilityEntity availabilityEntity);
 
+    @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     AvailabilityEntity mapToEntity(Availability availabilityModel);
 

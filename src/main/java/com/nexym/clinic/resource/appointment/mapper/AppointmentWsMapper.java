@@ -1,10 +1,13 @@
 package com.nexym.clinic.resource.appointment.mapper;
 
-import org.mapstruct.*;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR,
@@ -13,14 +16,11 @@ import java.time.ZoneOffset;
 )
 public interface AppointmentWsMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "creationDate", ignore = true)
-
-    default OffsetDateTime map(LocalDateTime date) {
+    default LocalDateTime mapTime(OffsetDateTime date) {
         if (date != null) {
-            return date.atOffset(ZoneOffset.UTC);
+            // truncate only to minutes
+            return date.toLocalDateTime().truncatedTo(ChronoUnit.MINUTES);
         }
         return null;
     }
-
 }

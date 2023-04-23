@@ -19,8 +19,8 @@ public class AvailabilityResource implements AvailabilitiesApi {
     private final AvailabilityService availabilityService;
 
     @Override
-    public ResponseEntity<Void> addAvailabilityByDoctorId(Long doctorId, AvailabilityRequest availabilityRequest) {
-        availabilityWsMapper.mapToApiModel(availabilityService.addAvailabilityByDoctorId(doctorId, availabilityWsMapper.mapToAvailabilityModel(availabilityRequest)));
+    public ResponseEntity<Void> addNewAvailability(Long doctorId, AvailabilityRequest availabilityRequest) {
+        availabilityService.addNewAvailability(doctorId, availabilityWsMapper.mapToAvailabilityModel(availabilityRequest));
         return ResponseEntity.noContent().build();
     }
 }

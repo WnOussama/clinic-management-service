@@ -20,6 +20,7 @@ public interface AppointmentEntityMapper {
     @Mapping(target = "modifiedDate", ignore = true)
     AppointmentEntity mapToEntity(Appointment appointmentModel);
 
+    @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     AvailabilityEntity mapToAvailabilityEntity(Availability availability);
 

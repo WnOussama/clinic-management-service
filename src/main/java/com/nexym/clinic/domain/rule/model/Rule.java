@@ -8,8 +8,8 @@ import lombok.Data;
 public class Rule {
 
     private Long id;
-    private Long startHour;
-    private Long endHour;
-    private Long startBreakHour;
-    private Long endBreakHour;
+    private Integer startHour;
+    private Integer endHour;
+    private Integer startBreakHour;
+    private Integer endBreakHour;
 }

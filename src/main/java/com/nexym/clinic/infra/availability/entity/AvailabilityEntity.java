@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "cm_availabilities")
+@EntityListeners(AuditingEntityListener.class)
 public class AvailabilityEntity {
 
     @Id
@@ -20,11 +22,9 @@ public class AvailabilityEntity {
     private Long id;
 
     @Column(name = "start_date", nullable = false)
-    @CreatedDate
     private LocalDateTime startDate;
 
     @Column(name = "end_date", nullable = false)
-    @CreatedDate
     private LocalDateTime endDate;
 
     @Column(name = "creation_date", nullable = false)

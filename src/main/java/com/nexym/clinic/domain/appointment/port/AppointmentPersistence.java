@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface AppointmentPersistence {
 
+    List<Appointment> getByAvailabilityId(Long availabilityId);
+
     List<Appointment> getAppointmentList();
 }

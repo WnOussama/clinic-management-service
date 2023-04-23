@@ -24,7 +24,6 @@ class AvailabilityServiceTest {
                 .id(1L)
                 .startDate(LocalDateTime.parse("2023-04-06 13:15:54", formatter))
                 .endDate(LocalDateTime.parse("2023-04-06 13:20:54", formatter))
-                .creationDate(LocalDateTime.parse("2023-04-06 13:11:54", formatter))
                 .build();
     }
 }

@@ -308,10 +308,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /api/v1/availabilities/{doctorId}:
+  /api/v1/doctors/{doctorId}/availabilities:
     post:
-      summary: Add a new availability
-      operationId: addAvailabilityByDoctorId
+      summary: Add a new availability for doctor
+      operationId: addNewAvailability
       tags:
         - Availabilities
       parameters:
@@ -338,17 +338,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /api/v1/appointments/{doctorId}:
+  /api/v1/patients/{patientId}/appointments:
     post:
-      summary: Add a new appointment
-      operationId: addAppointmentByDoctorId
+      summary: Add a new appointment for patient
+      operationId: addNewAppointment
       tags:
         - Appointments
       parameters:
-        - name: doctorId
+        - name: patientId
           in: path
           required: true
-          description: ID of the doctor
+          description: ID of the patient
           schema:
             type: integer
             format: int64
@@ -400,12 +400,6 @@ components:
           type: string
           format: date-time
         endDate:
-          type: string
-          format: date-time
-        creationDate:
-          type: string
-          format: date-time
-        modifiedDate:
           type: string
           format: date-time
     AvailabilityRequest:
@@ -548,6 +542,8 @@ components:
         specialityId:
           type: integer
           format: int64
+          description: 'Speciality of the doctor'
+          example: 1
     Doctor:
       type: object
       properties:
@@ -649,6 +645,10 @@ components:
           type: string
         phoneNumber:
           type: string
+        appointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"
         creationDate:
           type: string
           format: date-time
@@ -668,13 +668,10 @@ components:
         appointmentDate:
           type: string
           format: date-time
-        creationDate:
-          type: string
-          format: date-time
     AppointmentRequest:
       type: object
       properties:
-        patientId:
+        doctorId:
           type: integer
           format: int64
         appointmentDate:

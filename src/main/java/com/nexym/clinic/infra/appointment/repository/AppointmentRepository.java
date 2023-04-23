@@ -17,6 +17,11 @@ public class AppointmentRepository implements AppointmentPersistence {
     private final AppointmentDao appointmentDao;
 
     @Override
+    public List<Appointment> getByAvailabilityId(Long availabilityId) {
+        return appointmentEntityMapper.mapToModelList(appointmentDao.findByAvailabilityId(availabilityId));
+    }
+
+    @Override
     public List<Appointment> getAppointmentList() {
         var appointmentEntityList = appointmentDao.findAll();
         return appointmentEntityMapper.mapToModelList(appointmentEntityList);

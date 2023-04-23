@@ -1,6 +1,10 @@
 package com.nexym.clinic.infra.patient.mapper;
 
+import com.nexym.clinic.domain.appointment.model.Appointment;
+import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.patient.model.Patient;
+import com.nexym.clinic.infra.appointment.entity.AppointmentEntity;
+import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
 import com.nexym.clinic.infra.patient.entity.PatientEntity;
 import com.nexym.clinic.infra.user.entity.UserEntity;
 import org.mapstruct.*;
@@ -32,7 +36,15 @@ public interface PatientEntityMapper {
     Patient mapToModel(PatientEntity patientEntity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "appointments", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "modifiedDate", ignore = true)
+    AppointmentEntity mapToAppointmentEntity(Appointment appointment);
+
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "modifiedDate", ignore = true)
+    AvailabilityEntity mapToAvailabilityEntity(Availability availability);
+
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "user.id", ignore = true)
     @Mapping(target = "user.creationDate", ignore = true)
     @Mapping(target = "user.modifiedDate", ignore = true)
