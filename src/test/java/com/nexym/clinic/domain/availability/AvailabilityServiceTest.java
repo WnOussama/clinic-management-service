@@ -127,6 +127,17 @@ class AvailabilityServiceTest {
                 .hasMessage("Availability start date '2025-04-06T09:20' and end date '2025-04-07T13:25' do not respect global rule");
     }
 
+    @Test
+    void should_add_new_availability_dates_gap_inferior_than_duration_fail() {
+        // When
+        ThrowableAssert.ThrowingCallable callable = () -> availabilityService.addNewAvailability(1L, getAvailability("2025-04-06 09:20:00",
+                "2025-04-06 09:25:00"));
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(DoctorValidationException.class)
+                .hasMessage("The availability date gap is not sufficient for an appointment duration '15'");
+    }
+
     private static Availability getAvailability(String startDate, String endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return Availability.builder()
