@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -42,7 +43,8 @@ class UserServiceTest {
                 "Doe",
                 "01122334455",
                 "john.doe@mail.com",
-                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W"));
+                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W",
+                "2023-02-21 10:50:54"));
     }
 
     @Test
@@ -114,7 +116,8 @@ class UserServiceTest {
                 "Doe",
                 "01122334455",
                 "john.doe@mail.com",
-                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W"), User.builder()
+                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W",
+                "2023-02-21 10:50:54"), User.builder()
                 .userId(2L)
                 .civility(Civility.MRS)
                 .firstName("Jessie")
@@ -122,10 +125,11 @@ class UserServiceTest {
                 .phoneNumber("01122334455")
                 .email("jessie.doe@mail.com")
                 .password("$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W")
+                .creationDate(LocalDateTime.parse("2023-04-06 03:16:54", formatter))
                 .build()));
     }
 
-    private static User getUser(Civility civility, String firstName, String lastName, String phoneNumber, String email, String password) {
+    private static User getUser(Civility civility, String firstName, String lastName, String phoneNumber, String email, String password, String creationDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return User.builder()
                 .userId(1L)
@@ -135,6 +139,7 @@ class UserServiceTest {
                 .email(email)
                 .phoneNumber(phoneNumber)
                 .password(password)
+                .creationDate(LocalDateTime.parse(creationDate, formatter))
                 .build();
     }
 

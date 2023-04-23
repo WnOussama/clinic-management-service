@@ -7,6 +7,7 @@ import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
 import com.nexym.clinic.infra.doctor.dao.DoctorDao;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
 import com.nexym.clinic.infra.doctor.mapper.DoctorEntityMapper;
+import com.nexym.clinic.infra.user.dao.UserDao;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class DoctorRepository implements DoctorPersistence {
 
     private final DoctorDao doctorDao;
+    private final UserDao userDao;
     private final DoctorEntityMapper doctorEntityMapper;
 
 
@@ -38,7 +40,7 @@ public class DoctorRepository implements DoctorPersistence {
 
     @Override
     public boolean existsByUserEmail(String email) {
-        return doctorDao.existsByUserEmail(email);
+        return userDao.existsByEmail(email);
     }
 
     @Override
