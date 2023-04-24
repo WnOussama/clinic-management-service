@@ -3,7 +3,6 @@ package com.nexym.clinic.infra.user.repository;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.port.UserPersistence;
 import com.nexym.clinic.infra.user.dao.UserDao;
-import com.nexym.clinic.infra.user.entity.UserEntity;
 import com.nexym.clinic.infra.user.mapper.UserEntityMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,34 +28,8 @@ public class UserRepository implements UserPersistence {
     }
 
     @Override
-    public Optional<UserEntity> findByResetToken(String resetToken) {
-        return userDao.findByResetToken(resetToken);
-    }
-
-    @Override
-    public Long registerUser(User user) {
-        var savedUser = userDao.save(userEntityMapper.mapToEntity(user));
-        return savedUser.getId();
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return userDao.existsByEmail(email);
-    }
-
-    @Override
     public List<User> getUserList() {
         var userEntityList = userDao.findAll();
         return userEntityMapper.mapToModelList(userEntityList);
-    }
-
-    @Override
-    public User save(User user) {
-        return userEntityMapper.mapToModel(userDao.save(userEntityMapper.mapToEntity(user)));
-    }
-
-    @Override
-    public void deleteById(Long userId) {
-        userDao.deleteById(userId);
     }
 }

@@ -3,3 +3,9 @@ databaseChangeLog:
       file: db/changelog/2023-02-21-add-users-table.yaml
   - include:
       file: db/changelog/2023-03-07-add-user-role.yaml
+  - include:
+      file: db/changelog/2023-04-04-manage-users-structure.yaml
+  - include:
+      file: db/changelog/2023-04-11-manage-appointments.yaml
+  - include:
+      file: db/sql/2023-04-11-add-referentials-data.sql

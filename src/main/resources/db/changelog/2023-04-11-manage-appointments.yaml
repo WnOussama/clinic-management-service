@@ -1,0 +1,117 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-04-11-manage-appointments
+      author: oussamaouannassi@gmail.com
+      changes:
+        #CM_AVAILABILITIES: Defines the different doctors' availabilities
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_availabilities_seq
+            startValue: 1
+        - createTable:
+            tableName: cm_availabilities
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: doctor_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_doctors
+                    references: cm_doctors(id)
+              - column:
+                  name: start_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+        #CM_APPOINTMENTS: Defines the different patients' appointments
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_appointments_seq
+            startValue: 1
+        - createTable:
+            tableName: cm_appointments
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: patient_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_patients
+                    references: cm_patients(id)
+              - column:
+                  name: availability_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_availabilities
+                    references: cm_availabilities(id)
+              - column:
+                  name: prescription
+                  type: varchar2
+              - column:
+                  name: status
+                  type: varchar2
+              - column:
+                  name: cancelled
+                  type: boolean
+              - column:
+                  name: cancellation_reason
+                  type: varchar2
+              - column:
+                  name: appointment_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+
+      rollback:
+        - dropSequence:
+          sequenceName: cm_availabilities_seq
+        - dropTable:
+          tableName: cm_availabilities
+        - dropSequence:
+          sequenceName: cm_appointments_seq
+        - dropTable:
+          tableName: cm_appointments
