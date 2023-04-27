@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -56,11 +55,6 @@ public class UserServiceImpl implements UserService {
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
         return userPersistence.getUserByEmail(email)
                 .orElseThrow(() -> new AccessDeniedException("Access to this resource is denied"));
-    }
-
-    @Override
-    public Optional<User> findUserByResetToken(String resetToken) {
-        return Optional.empty();
     }
 
     private Authentication generateUserAuthentication(String email) {

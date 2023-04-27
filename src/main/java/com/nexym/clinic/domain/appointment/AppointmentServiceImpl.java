@@ -14,9 +14,13 @@ import com.nexym.clinic.domain.patient.port.PatientPersistence;
 import com.nexym.clinic.domain.rule.port.RulePersistence;
 import com.nexym.clinic.domain.speciality.exception.SpecialityNotFoundException;
 import com.nexym.clinic.domain.speciality.port.SpecialityPersistence;
+import com.nexym.clinic.domain.user.mail.MailDetail;
+import com.nexym.clinic.domain.user.mail.MailService;
 import com.nexym.clinic.utils.FormatUtil;
 import com.nexym.clinic.utils.exception.TechnicalException;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +44,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
     private SpecialityPersistence specialityPersistence;
+
+    @Autowired
+    private MailService mailService;
+
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
     @Override
     public void addNewAppointment(Long patientId, Long doctorId, LocalDateTime appointmentDate) {
@@ -67,7 +76,19 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .availability(matchingAvailability)
                 .build());
         patientPersistence.createOrUpdate(patient);
-        //TODO (23/04/2023) maybe once an appointment is requested, send an email to doctor for information
+        // Retrieve the doctor's email address
+        String doctorEmail = doctor.getEmail();
+        // Construct the email message
+        String subject = "New appointment request";
+        String body = String.format("Dear Dr. %s,%n%nA new appointment has been requested for %s at %s.%n%nSincerely,%nThe Healthy Steps Clinic",
+                doctor.getLastName(), patient.getFirstName(), appointmentDate.toString());
+        MailDetail mailDetail = new MailDetail();
+        mailDetail.setRecipient(doctorEmail);
+        mailDetail.setSubject(subject);
+        mailDetail.setMsgBody(body);
+        // Send email to the doctor
+        var message = mailService.sendMail(mailDetail);
+        logger.info(message);
     }
 
     private static boolean doNotRespectHoursRules(LocalDateTime appointmentDate,

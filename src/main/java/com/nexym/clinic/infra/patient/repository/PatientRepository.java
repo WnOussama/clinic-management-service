@@ -2,6 +2,7 @@ package com.nexym.clinic.infra.patient.repository;
 
 import com.nexym.clinic.domain.patient.exception.PatientNotFoundException;
 import com.nexym.clinic.domain.patient.model.Patient;
+import com.nexym.clinic.domain.patient.model.PatientList;
 import com.nexym.clinic.domain.patient.port.PatientPersistence;
 import com.nexym.clinic.infra.patient.dao.PatientDao;
 import com.nexym.clinic.infra.patient.entity.PatientEntity;
@@ -9,6 +10,7 @@ import com.nexym.clinic.infra.patient.mapper.PatientEntityMapper;
 import com.nexym.clinic.infra.user.dao.UserDao;
 import com.nexym.clinic.utils.FormatUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -37,6 +39,13 @@ public class PatientRepository implements PatientPersistence {
             savedPatient = patientDao.save(patientEntityMapper.mapToEntity(patient));
         }
         return savedPatient.getId();
+    }
+
+    @Override
+    public PatientList getPatientList(Integer page, Integer size) {
+        var pageable = PageRequest.of(page, size);
+        var doctorEntityList = patientDao.findAll(pageable);
+        return patientEntityMapper.mapToModelList(doctorEntityList);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class SpecialityServiceImpl implements SpecialityService{
     private SpecialityPersistence specialityPersistence;
 
     @Override
-    public List<Speciality> getSpecialities() {
+    public List<Speciality> getSpecialitiesList() {
         return specialityPersistence.getSpecialities();
     }
 }

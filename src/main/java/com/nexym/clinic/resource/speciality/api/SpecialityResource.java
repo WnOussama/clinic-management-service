@@ -22,7 +22,7 @@ public class SpecialityResource implements SpecialitiesApi {
 
     @Override
     public ResponseEntity<List<Speciality>> getSpecialities() {
-        return ResponseEntity.ok(specialityWsMapper.mapToSpecialityResponseList(specialityService.getSpecialities()));
+        return ResponseEntity.ok(specialityWsMapper.mapToSpecialityResponseList(specialityService.getSpecialitiesList()));
     }
 
 }
