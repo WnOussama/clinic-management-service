@@ -2,6 +2,7 @@ package com.nexym.clinic.resource.patient.api;
 
 import com.nexym.clinic.api.PatientsApi;
 import com.nexym.clinic.api.model.Patient;
+import com.nexym.clinic.api.model.PatientListResponse;
 import com.nexym.clinic.api.model.PatientRequest;
 import com.nexym.clinic.domain.patient.PatientService;
 import com.nexym.clinic.resource.patient.mapper.PatientWsMapper;
@@ -24,6 +25,11 @@ public class PatientResource implements PatientsApi {
     public ResponseEntity<Void> registerPatient(PatientRequest patientRequest) {
         var savedPatientId = patientService.registerPatient(patientWsMapper.mapToPatientModel(patientRequest));
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedPatientId).toUri()).build();
+    }
+
+    @Override
+    public ResponseEntity<PatientListResponse> searchPatients(Integer page, Integer size) {
+        return ResponseEntity.ok(patientWsMapper.mapToPatientResponseList(patientService.getPatientList(page, size)));
     }
 
     @Override

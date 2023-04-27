@@ -45,9 +45,6 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "reset_token")
-    private String resetToken;
-
     @Column(name = "creation_date", nullable = false)
     @CreatedDate
     private LocalDateTime creationDate;
