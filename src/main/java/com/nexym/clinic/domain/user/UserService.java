@@ -11,13 +11,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
     User getUserById(Long userId);
 
-    Long registerUser(User user);
-
     List<User> getUserList();
 
     Authentication authenticate(LoginCredential loginCredential, AuthenticationManager authenticationManager);
-
-    User updateUserById(Long userId, User user);
-
-    void deleteUserById(Long userId);
 }

@@ -16,7 +16,6 @@ class UserModelTest {
                 .phoneNumber("01134345")
                 .lastName("Doe")
                 .civility(Civility.MR)
-                .role(UserRole.PATIENT)
                 .email("john.doe@mail.com")
                 .password("Toto2024")
                 .build();
@@ -30,7 +29,6 @@ class UserModelTest {
                 .phoneNumber("01134345")
                 .firstName("John")
                 .civility(Civility.MR)
-                .role(UserRole.PATIENT)
                 .email("john.doe@mail.com")
                 .password("Toto2024")
                 .build();
@@ -45,7 +43,6 @@ class UserModelTest {
                 .isEqualTo(List.of("Civility should be filled",
                         "First name should be filled",
                         "Last name should be filled",
-                        "User role should be filled",
                         "Email should be filled",
                         "Password should be filled",
                         "Phone number should be filled"));

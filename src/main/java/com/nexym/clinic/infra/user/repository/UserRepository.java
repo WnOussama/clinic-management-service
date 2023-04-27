@@ -28,29 +28,8 @@ public class UserRepository implements UserPersistence {
     }
 
     @Override
-    public Long registerUser(User user) {
-        var savedUser = userDao.save(userEntityMapper.mapToEntity(user));
-        return savedUser.getId();
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return userDao.existsByEmail(email);
-    }
-
-    @Override
     public List<User> getUserList() {
         var userEntityList = userDao.findAll();
         return userEntityMapper.mapToModelList(userEntityList);
-    }
-
-    @Override
-    public User save(User user) {
-        return userEntityMapper.mapToModel(userDao.save(userEntityMapper.mapToEntity(user)));
-    }
-
-    @Override
-    public void deleteById(Long userId) {
-        userDao.deleteById(userId);
     }
 }
