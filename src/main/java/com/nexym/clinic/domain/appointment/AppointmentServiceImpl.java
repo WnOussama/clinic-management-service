@@ -49,7 +49,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private MailService mailService;
 
     private static final Logger logger = LoggerFactory.getLogger(AppointmentServiceImpl.class);
-
+    
     @Override
     public void addNewAppointment(Long patientId, Long doctorId, LocalDateTime appointmentDate) {
         Patient patient = getPatient(patientId);
