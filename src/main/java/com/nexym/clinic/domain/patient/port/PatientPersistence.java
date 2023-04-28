@@ -16,4 +16,6 @@ public interface PatientPersistence {
     Optional<Patient> getPatientById(Long patientId);
 
     void deleteById(Long patientId);
+
+    Optional<Patient> getPatientByEmail(String email);
 }

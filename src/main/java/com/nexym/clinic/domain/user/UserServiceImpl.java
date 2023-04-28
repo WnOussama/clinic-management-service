@@ -1,6 +1,8 @@
 package com.nexym.clinic.domain.user;
 
 import com.nexym.clinic.config.security.JwtProvider;
+import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
+import com.nexym.clinic.domain.patient.port.PatientPersistence;
 import com.nexym.clinic.domain.user.exception.UserNotFoundException;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.model.auth.Authentication;
@@ -27,6 +29,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JwtProvider jwtUtils;
+
+    @Autowired
+    private DoctorPersistence doctorPersistence;
+
+    @Autowired
+    private PatientPersistence patientPersistence;
 
 
     @Override
@@ -62,8 +70,22 @@ public class UserServiceImpl implements UserService {
         var token = jwtUtils.generateToken(user);
         var expirationDate = jwtUtils.getExpirationDateFromToken(token);
         var now = new Date();
+        Long id = null;
+        boolean isDoctor = false;
+        // Check if the user is a doctor
+        var doctor = doctorPersistence.getDoctorByEmail(email);
+        if (doctor.isPresent()) {
+            isDoctor = true;
+            id = doctor.get().getId();
+        }
+        // Check if the user is a patient
+        var patient = patientPersistence.getPatientByEmail(email);
+        if (patient.isPresent()) {
+            id = patient.get().getId();
+        }
         return Authentication.builder()
-                .id(user.getUserId())
+                .id(id)
+                .isDoctor(isDoctor)
                 .token(token)
                 .expiresIn((expirationDate.getTime() - now.getTime()) / 1000)
                 .build();

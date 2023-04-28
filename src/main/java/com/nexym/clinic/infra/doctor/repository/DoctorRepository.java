@@ -63,4 +63,9 @@ public class DoctorRepository implements DoctorPersistence {
     public void deleteDoctorById(Long doctorId) {
         doctorDao.deleteById(doctorId);
     }
+
+    @Override
+    public Optional<Doctor> getDoctorByEmail(String email) {
+        return doctorDao.findByUserEmail(email).map(doctorEntityMapper::mapToModel);
+    }
 }

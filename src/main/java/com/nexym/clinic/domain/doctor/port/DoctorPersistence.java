@@ -16,4 +16,6 @@ public interface DoctorPersistence {
     Optional<Doctor> getDoctorById(Long doctorId);
 
     void deleteDoctorById(Long doctorId);
+
+    Optional<Doctor> getDoctorByEmail(String email);
 }
