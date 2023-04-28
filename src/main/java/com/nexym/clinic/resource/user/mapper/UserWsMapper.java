@@ -28,5 +28,18 @@ public interface UserWsMapper {
 
     List<User> mapToUserResponseList(List<com.nexym.clinic.domain.user.model.User> userList);
 
-    AuthenticateResponse mapToAuthenticateResponse(Authentication authenticate);
+
+    default AuthenticateResponse mapToAuthenticateResponse(Authentication authenticate) {
+        if (authenticate == null) {
+            return null;
+        }
+
+        AuthenticateResponse response = new AuthenticateResponse();
+        response.setToken(authenticate.getToken());
+        response.setExpiresIn(authenticate.getExpiresIn());
+        response.setIsDoctor(authenticate.isDoctor());
+        response.setId(authenticate.getId());
+
+        return response;
+    }
 }

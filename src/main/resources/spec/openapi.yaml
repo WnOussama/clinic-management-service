@@ -478,6 +478,8 @@ components:
         id:
           type: integer
           format: int64
+        isDoctor:
+          type: boolean
         token:
           type: string
         expiresIn:

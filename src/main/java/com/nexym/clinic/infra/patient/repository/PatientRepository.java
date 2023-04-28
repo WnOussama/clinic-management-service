@@ -62,4 +62,9 @@ public class PatientRepository implements PatientPersistence {
     public void deleteById(Long patientId) {
         patientDao.deleteById(patientId);
     }
+
+    @Override
+    public Optional<Patient> getPatientByEmail(String email) {
+        return patientDao.findByUserEmail(email).map(patientEntityMapper::mapToModel);
+    }
 }

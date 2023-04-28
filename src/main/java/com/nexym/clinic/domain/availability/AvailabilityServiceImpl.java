@@ -83,8 +83,8 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     }
 
     private static boolean doNotRespectHoursRules(LocalDateTime startDate, LocalDateTime endDate, int startHour, int startBreakHour, int endBreakHour, int endHour) {
-        return !isInRangeDayWorkingHours(startDate, startHour, startBreakHour, endBreakHour, endHour) ||
-                !isInRangeDayWorkingHours(endDate, startHour, startBreakHour, endBreakHour, endHour) ||
+        return isInRangeDayWorkingHours(startDate, startHour, startBreakHour, endBreakHour, endHour) ||
+                isInRangeDayWorkingHours(endDate, startHour, startBreakHour, endBreakHour, endHour) ||
                 isInBreakTime(startDate, startBreakHour, endBreakHour) ||
                 isInBreakTime(endDate, startBreakHour, endBreakHour);
     }
@@ -94,8 +94,8 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     }
 
     private static boolean isInRangeDayWorkingHours(LocalDateTime requestedDate, int startHour, int startBreakHour, int endBreakHour, int endHour) {
-        return FormatUtil.isStrictTimeWithinHoursRange(requestedDate, startHour, startBreakHour) ||
-                FormatUtil.isStrictTimeWithinHoursRange(requestedDate, endBreakHour, endHour);
+        return !FormatUtil.isStrictTimeWithinHoursRange(requestedDate, startHour, startBreakHour) &&
+                !FormatUtil.isStrictTimeWithinHoursRange(requestedDate, endBreakHour, endHour);
     }
 
     private static void checkOverlappingWithExistingAvailabilities(LocalDateTime startDate, LocalDateTime endDate, List<Availability> availabilities) {
