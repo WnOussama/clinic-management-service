@@ -14,9 +14,12 @@ import com.nexym.clinic.domain.patient.port.PatientPersistence;
 import com.nexym.clinic.domain.rule.port.RulePersistence;
 import com.nexym.clinic.domain.speciality.exception.SpecialityNotFoundException;
 import com.nexym.clinic.domain.speciality.port.SpecialityPersistence;
+import com.nexym.clinic.domain.user.mail.MailDetail;
+import com.nexym.clinic.domain.user.mail.MailService;
 import com.nexym.clinic.utils.FormatUtil;
 import com.nexym.clinic.utils.exception.TechnicalException;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +44,15 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Autowired
     private SpecialityPersistence specialityPersistence;
 
+    @Autowired
+    private MailService mailService;
+
     @Override
     public void addNewAppointment(Long patientId, Long doctorId, LocalDateTime appointmentDate) {
         Patient patient = getPatient(patientId);
         Doctor doctor = getDoctor(doctorId);
+
+        if (appointmentDate == null) throw new AppointmentValidationException("Appointment date is required");
 
         // validate appointment date hours with global rule
         var rule = rulePersistence.findGlobalRule()
@@ -67,7 +75,32 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .availability(matchingAvailability)
                 .build());
         patientPersistence.createOrUpdate(patient);
-        //TODO (23/04/2023) maybe once an appointment is requested, send an email to doctor for information
+        sendAppointmentEmailToDoctor(appointmentDate, patient.getFirstName(), patient.getLastName(),
+                doctor.getFirstName(), doctor.getLastName(), doctor.getEmail());
+        // TODO 28/04/2023 send confirmation email to the patient
+    }
+
+    private void sendAppointmentEmailToDoctor(LocalDateTime appointmentDate, String patientFirstName, String patientLastName,
+                                              String doctorFirstName, String doctorLastName, String doctorEmail) {
+        // Construct the email message
+        MailDetail mailDetail = constructMessageDetail(appointmentDate,
+                patientFirstName.concat(patientLastName),
+                doctorFirstName.concat(doctorLastName),
+                doctorEmail);
+        // Send email to the doctor
+        mailService.sendMail(mailDetail);
+    }
+
+    @NotNull
+    private static MailDetail constructMessageDetail(LocalDateTime appointmentDate, String patientName, String doctorName, String doctorEmail) {
+        var subject = "New appointment request";
+        var body = String.format("Dear Dr. %s,%n%nA new appointment has been requested for %s at %s.%n%nSincerely,%nThe Healthy Steps Clinic",
+                doctorName, patientName, appointmentDate.toString());
+        return MailDetail.builder()
+                .recipient(doctorEmail)
+                .subject(subject)
+                .messageBody(body)
+                .build();
     }
 
     private static boolean doNotRespectHoursRules(LocalDateTime appointmentDate,

@@ -2,6 +2,7 @@ package com.nexym.clinic.domain.patient;
 
 import com.nexym.clinic.domain.patient.exception.PatientValidationException;
 import com.nexym.clinic.domain.patient.model.Patient;
+import com.nexym.clinic.domain.patient.model.PatientList;
 import com.nexym.clinic.domain.user.exception.UserValidationException;
 import com.nexym.clinic.domain.user.model.Civility;
 import org.assertj.core.api.Assertions;
@@ -15,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 @DataJpaTest
@@ -23,6 +25,8 @@ class PatientServiceTest {
 
     @Autowired
     private PatientService patientService;
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Test
     void should_register_patient_success() {
@@ -66,6 +70,27 @@ class PatientServiceTest {
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(PatientValidationException.class)
                 .hasMessage("Failed to validate patient request");
+    }
+
+    @Test
+    void should_search_patients_success() {
+        var patientList = patientService.getPatientList(0, 10);
+        // Then
+        var items = List.of(Patient.PatientBuilder()
+                .id(1L)
+                .userId(1L)
+                .creationDate(LocalDateTime.parse("2023-02-21 10:50:54", formatter))
+                .appointments(List.of())
+                .build());
+        Assertions.assertThat(patientList).isEqualTo(PatientList.builder()
+                .items(items)
+                .first(true)
+                .last(true)
+                .number(0)
+                .totalElements(1L)
+                .numberOfElements(1)
+                .totalPages(1)
+                .build());
     }
 
     private static Patient getPatient(Civility civility, String firstName, String lastName, String phoneNumber, String email, String password) {

@@ -3,6 +3,7 @@ package com.nexym.clinic.domain.patient;
 import com.nexym.clinic.domain.patient.exception.PatientNotFoundException;
 import com.nexym.clinic.domain.patient.exception.PatientValidationException;
 import com.nexym.clinic.domain.patient.model.Patient;
+import com.nexym.clinic.domain.patient.model.PatientList;
 import com.nexym.clinic.domain.patient.port.PatientPersistence;
 import com.nexym.clinic.domain.user.exception.UserValidationException;
 import com.nexym.clinic.utils.FormatUtil;
@@ -29,6 +30,11 @@ public class PatientServiceImpl implements PatientService {
             }
             return patientPersistence.createOrUpdate(patient);
         }
+    }
+
+    @Override
+    public PatientList getPatientList(Integer page, Integer size) {
+        return patientPersistence.getPatientList(page, size);
     }
 
     @Override

@@ -179,6 +179,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    get:
+      summary: Retrieve a list of patients
+      operationId: searchPatients
+      tags:
+        - Patients
+      parameters:
+        - name: page
+          in: query
+          description: Page index, starts at 0
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Number of items per page, default is 10
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientListResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   
   /api/v1/patients/{patientId}:
     get:
@@ -451,6 +483,13 @@ components:
         expiresIn:
           type: integer
           format: int64
+        role:
+          type: string
+          example: 'PATIENT'
+          description: 'The role of the authenticated user'
+          enum:
+            - PATIENT
+            - DOCTOR
     UserRequest:
       type: object
       properties:
@@ -652,6 +691,27 @@ components:
         creationDate:
           type: string
           format: date-time
+    PatientListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Patient"
+        first:
+          type: boolean
+        last:
+          type: boolean
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
     Appointment:
       type: object
       properties:

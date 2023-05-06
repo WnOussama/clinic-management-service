@@ -3,11 +3,13 @@ package com.nexym.clinic.infra.patient.mapper;
 import com.nexym.clinic.domain.appointment.model.Appointment;
 import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.patient.model.Patient;
+import com.nexym.clinic.domain.patient.model.PatientList;
 import com.nexym.clinic.infra.appointment.entity.AppointmentEntity;
 import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
 import com.nexym.clinic.infra.patient.entity.PatientEntity;
 import com.nexym.clinic.infra.user.entity.UserEntity;
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR,
@@ -55,4 +57,20 @@ public interface PatientEntityMapper {
     @Mapping(target = "user.password", source = "password")
     @Mapping(target = "user.phoneNumber", source = "phoneNumber")
     void update(@MappingTarget PatientEntity existingPatient, Patient updateRequest);
+
+    default PatientList mapToModelList(Page<PatientEntity> page) {
+        var items = page.get()
+                .map(this::mapToModel)
+                .toList();
+        return PatientList.builder()
+                .items(items)
+                .first(page.isFirst())
+                .last(page.isLast())
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElements(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
+    }
 }

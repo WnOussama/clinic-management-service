@@ -8,6 +8,7 @@ import com.nexym.clinic.infra.doctor.dao.DoctorDao;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
 import com.nexym.clinic.infra.doctor.mapper.DoctorEntityMapper;
 import com.nexym.clinic.infra.user.dao.UserDao;
+import com.nexym.clinic.utils.FormatUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class DoctorRepository implements DoctorPersistence {
         if (doctor.getId() != null) { // update case
             var existingDoctor = doctorDao.findById(doctor.getId())
                     .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%s' does not exist", doctor.getId())));
+            if (FormatUtil.isFilled(existingDoctor.getAvailabilities())) {
+                existingDoctor.getAvailabilities().clear();
+            }
             doctorEntityMapper.update(existingDoctor, doctor);
             doctorEntity = doctorDao.save(existingDoctor);
         } else {

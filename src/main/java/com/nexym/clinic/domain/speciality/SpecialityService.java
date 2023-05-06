@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface SpecialityService {
 
-    List<Speciality> getSpecialities();
+    List<Speciality> getSpecialitiesList();
 }

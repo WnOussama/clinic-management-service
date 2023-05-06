@@ -1,7 +1,9 @@
 package com.nexym.clinic.resource.patient.mapper;
 
 import com.nexym.clinic.api.model.Patient;
+import com.nexym.clinic.api.model.PatientListResponse;
 import com.nexym.clinic.api.model.PatientRequest;
+import com.nexym.clinic.domain.patient.model.PatientList;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -29,4 +31,6 @@ public interface PatientWsMapper {
     }
 
     Patient map(com.nexym.clinic.domain.patient.model.Patient patientModel);
+
+    PatientListResponse mapToPatientResponseList(PatientList patientList);
 }
