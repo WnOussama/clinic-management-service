@@ -1,3 +1,6 @@
+# local environment properties
+src/main/resources/application-local.yaml
+# generated sources
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
