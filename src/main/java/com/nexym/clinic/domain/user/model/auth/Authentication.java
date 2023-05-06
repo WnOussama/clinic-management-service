@@ -12,7 +12,6 @@ import lombok.Setter;
 public class Authentication {
 
     private Long id;
-    private boolean isDoctor;
     private String token;
     private Long expiresIn;
     private UserRole role;
