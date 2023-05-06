@@ -7,6 +7,7 @@ import com.nexym.clinic.domain.user.exception.UserNotFoundException;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.domain.user.model.auth.Authentication;
 import com.nexym.clinic.domain.user.model.auth.LoginCredential;
+import com.nexym.clinic.domain.user.model.auth.UserRole;
 import com.nexym.clinic.domain.user.port.UserPersistence;
 import com.nexym.clinic.utils.exception.AccessDeniedException;
 import lombok.AllArgsConstructor;
@@ -71,21 +72,22 @@ public class UserServiceImpl implements UserService {
         var expirationDate = jwtUtils.getExpirationDateFromToken(token);
         var now = new Date();
         Long id = null;
-        boolean isDoctor = false;
+        UserRole role = null;
         // Check if the user is a doctor
         var doctor = doctorPersistence.getDoctorByEmail(email);
         if (doctor.isPresent()) {
-            isDoctor = true;
             id = doctor.get().getId();
+            role = UserRole.DOCTOR;
         }
         // Check if the user is a patient
         var patient = patientPersistence.getPatientByEmail(email);
         if (patient.isPresent()) {
             id = patient.get().getId();
+            role = UserRole.PATIENT;
         }
         return Authentication.builder()
                 .id(id)
-                .isDoctor(isDoctor)
+                .role(role)
                 .token(token)
                 .expiresIn((expirationDate.getTime() - now.getTime()) / 1000)
                 .build();
