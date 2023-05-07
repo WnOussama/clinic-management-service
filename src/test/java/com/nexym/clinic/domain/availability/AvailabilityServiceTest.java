@@ -128,6 +128,17 @@ class AvailabilityServiceTest {
     }
 
     @Test
+    void should_add_new_availability_includes_weekend_days_fail() {
+        // When
+        ThrowableAssert.ThrowingCallable callable = () -> availabilityService.addNewAvailability(1L, getAvailability("2023-05-12 09:00:00",
+                "2023-05-16 18:00:00"));
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(DoctorValidationException.class)
+                .hasMessage("Availability start date '2023-05-12T09:00' and end date '2023-05-16T18:00' includes weekend days");
+    }
+
+    @Test
     void should_add_new_availability_dates_gap_inferior_than_duration_fail() {
         // When
         ThrowableAssert.ThrowingCallable callable = () -> availabilityService.addNewAvailability(1L, getAvailability("2025-04-06 09:20:00",
