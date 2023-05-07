@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -56,8 +57,15 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         }
 
         checkOverlappingWithExistingAvailabilities(startDate, endDate, doctor.getAvailabilities());
-        //TODO(23/04/2023) do we need to check week ends and holidays
-    }
+        LocalDateTime date = startDate;
+        while (date.isBefore(endDate)) {
+            if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                throw new DoctorValidationException(String.format("Availability start date '%s' and end date '%s' includes weekend days", startDate, endDate));
+            }
+            date = date.plusDays(1);
+        }
+
+        }
 
     private void validateAvailabilityDuration(LocalDateTime startDate, LocalDateTime endDate, Long specialityId) {
         var speciality = specialityPersistence.getSpecialityById(specialityId)
