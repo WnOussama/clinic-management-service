@@ -77,7 +77,31 @@ public class AppointmentServiceImpl implements AppointmentService {
         patientPersistence.createOrUpdate(patient);
         sendAppointmentEmailToDoctor(appointmentDate, patient.getFirstName(), patient.getLastName(),
                 doctor.getFirstName(), doctor.getLastName(), doctor.getEmail());
-        // TODO 28/04/2023 send confirmation email to the patient
+        sendAppointmentConfirmationEmailToPatient(appointmentDate, patient.getFirstName(), patient.getLastName(),
+                doctor.getFirstName(), doctor.getLastName(), patient.getEmail());
+    }
+
+    private void sendAppointmentConfirmationEmailToPatient(LocalDateTime appointmentDate, String patientFirstName, String patientLastName,
+                                                           String doctorFirstName, String doctorLastName, String patientEmail) {
+        // Construct the email message
+        MailDetail mailDetail = constructConfirmationMessageDetail(appointmentDate,
+                patientFirstName.concat(patientLastName),
+                doctorFirstName.concat(doctorLastName),
+                patientEmail);
+        // Send email to the patient
+        mailService.sendMail(mailDetail);
+    }
+
+    @NotNull
+    private static MailDetail constructConfirmationMessageDetail(LocalDateTime appointmentDate, String patientName, String doctorName, String patientEmail) {
+        var subject = "Appointment confirmation";
+        var body = String.format("Dear %s,%n%nYour appointment with Dr. %s has been scheduled for %s.%n%nSincerely,%nThe Healthy Steps Clinic",
+                patientName, doctorName, appointmentDate.toString());
+        return MailDetail.builder()
+                .recipient(patientEmail)
+                .subject(subject)
+                .messageBody(body)
+                .build();
     }
 
     private void sendAppointmentEmailToDoctor(LocalDateTime appointmentDate, String patientFirstName, String patientLastName,
