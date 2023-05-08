@@ -1,14 +1,14 @@
 package com.nexym.clinic.infra.patient.repository;
 
+import com.nexym.clinic.domain.appointment.model.Appointment;
+import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.patient.exception.PatientNotFoundException;
 import com.nexym.clinic.domain.patient.model.Patient;
 import com.nexym.clinic.domain.patient.model.PatientList;
 import com.nexym.clinic.domain.patient.port.PatientPersistence;
 import com.nexym.clinic.infra.patient.dao.PatientDao;
-import com.nexym.clinic.infra.patient.entity.PatientEntity;
 import com.nexym.clinic.infra.patient.mapper.PatientEntityMapper;
 import com.nexym.clinic.infra.user.dao.UserDao;
-import com.nexym.clinic.utils.FormatUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,21 +24,25 @@ public class PatientRepository implements PatientPersistence {
     private final PatientEntityMapper patientEntityMapper;
 
     @Override
-    public Long createOrUpdate(Patient patient) {
-        PatientEntity savedPatient;
-        if (patient.getId() != null) {
-            var existingPatient = patientDao.findById(patient.getId())
-                    .orElseThrow(() -> new PatientNotFoundException(String.format("Patient with id '%s' does not exist", patient.getId())));
-            if (FormatUtil.isFilled(existingPatient.getAppointments())) {
-                existingPatient.getAppointments().clear();
-            }
-            patientEntityMapper.update(existingPatient, patient);
-            savedPatient = patientDao.save(existingPatient);
-        } else {
-            // new entity instance
-            savedPatient = patientDao.save(patientEntityMapper.mapToEntity(patient));
-        }
+    public Long addNewPatient(Patient patient) {
+        var savedPatient = patientDao.save(patientEntityMapper.mapToEntity(patient));
         return savedPatient.getId();
+    }
+
+    @Override
+    public void updatePatientDetails(Patient patient) {
+        var existingPatient = patientDao.findById(patient.getId())
+                .orElseThrow(() -> new PatientNotFoundException(String.format("Patient with id '%s' does not exist", patient.getId())));
+        patientEntityMapper.update(existingPatient, patient);
+        patientDao.save(existingPatient);
+    }
+
+    @Override
+    public void addNewAppointment(Long patientId, Appointment appointment) {
+        var existingPatient = patientDao.findById(patientId)
+                .orElseThrow(() -> new DoctorNotFoundException(String.format("Patient with id '%s' does not exist", patientId)));
+        existingPatient.getAppointments().add(patientEntityMapper.mapToAppointmentEntity(appointment));
+        patientDao.save(existingPatient);
     }
 
     @Override

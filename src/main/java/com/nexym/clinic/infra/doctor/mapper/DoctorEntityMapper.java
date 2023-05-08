@@ -72,6 +72,7 @@ public interface DoctorEntityMapper {
     @Mapping(target = "user.id", ignore = true)
     @Mapping(target = "user.creationDate", ignore = true)
     @Mapping(target = "user.modifiedDate", ignore = true)
+    @Mapping(target = "availabilities", ignore = true)
     @Mapping(target = "speciality", source = "specialityId")
     @Mapping(target = "user.firstName", source = "firstName")
     @Mapping(target = "user.lastName", source = "lastName")
