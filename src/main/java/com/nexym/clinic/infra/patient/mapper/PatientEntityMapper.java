@@ -38,9 +38,14 @@ public interface PatientEntityMapper {
     Patient mapToModel(PatientEntity patientEntity);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "patient", ignore = true)
+    @Mapping(target = "patient.id", source = "patientId")
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     AppointmentEntity mapToAppointmentEntity(Appointment appointment);
+
+    @Mapping(target = "patientId", source = "patient.id")
+    Appointment mapToAppointment(AppointmentEntity appointmentEntity);
 
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)

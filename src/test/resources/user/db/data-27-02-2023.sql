@@ -11,6 +11,6 @@ VALUES (3, 'MR', 'Ramsey', 'Foden', 'ramsey.foden@mail.com', '01122334455', '$2a
 INSERT INTO CM_DOCTORS(id, user_id, rule_id, speciality_id, address)
 VALUES (2, 3, 1, 51, '05 Rue Pierre Soulat, 78260 Acheres, France');
 INSERT INTO CM_AVAILABILITIES(id, doctor_id, start_date, end_date, creation_date, modified_date)
-VALUES (1, 2, '2025-04-23 09:00:00.000000', '2025-04-25 18:00:00.000000', '2023-04-23 20:55:54.000000', '2023-04-23 20:55:54.000000');
+VALUES (1, 1, '2023-04-24 09:00:00.000000', '2023-04-24 18:00:00.000000', '2023-04-23 20:55:54.000000', '2023-04-23 20:55:54.000000');
 INSERT INTO CM_APPOINTMENTS(id, patient_id, availability_id, appointment_date, creation_date, modified_date)
-VALUES (1, 1, 1, '2025-04-23 09:00:00.000000', '2023-04-23 20:55:54.000000', '2023-04-23 20:55:54.000000');
+VALUES (1, 1, 1, '2023-04-24 09:00:00.000000', '2023-04-23 20:55:54.000000', '2023-04-23 20:55:54.000000');

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class Appointment implements Serializable {
 
     private Long id;
+    private Long patientId;
     private String prescription;
     private Status status;
     private Boolean cancelled;
