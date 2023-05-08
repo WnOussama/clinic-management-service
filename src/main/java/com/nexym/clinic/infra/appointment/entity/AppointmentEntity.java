@@ -2,6 +2,7 @@ package com.nexym.clinic.infra.appointment.entity;
 
 import com.nexym.clinic.domain.appointment.model.Status;
 import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
+import com.nexym.clinic.infra.patient.entity.PatientEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,11 @@ public class AppointmentEntity {
     @OneToOne
     @JoinColumn(name = "availability_id", nullable = false)
     private AvailabilityEntity availability;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", nullable = false, insertable = false, updatable = false)
+    private PatientEntity patient;
+
 
     @Column(name = "prescription", nullable = false)
     private String prescription;

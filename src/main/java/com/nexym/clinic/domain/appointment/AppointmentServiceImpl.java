@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -78,6 +79,17 @@ public class AppointmentServiceImpl implements AppointmentService {
         sendAppointmentEmailToDoctor(appointmentDate, patient.getFirstName(), patient.getLastName(),
                 doctor.getFirstName(), doctor.getLastName(), doctor.getEmail());
         // TODO 28/04/2023 send confirmation email to the patient
+    }
+
+    @Override
+    public List<Appointment> getAppointmentByDoctorId(Long doctorId) {
+        Doctor doctor = getDoctor(doctorId);
+        var availabilities = doctor.getAvailabilities();
+        if (!FormatUtil.isFilled(availabilities))
+            throw new AppointmentValidationException(String.format("We cannot find any availability for doctor with id '%s'", doctorId));
+        return availabilities.stream()
+                .flatMap(availability -> appointmentPersistence.getByAvailabilityId(availability.getId()).stream())
+                .toList();
     }
 
     private void sendAppointmentEmailToDoctor(LocalDateTime appointmentDate, String patientFirstName, String patientLastName,

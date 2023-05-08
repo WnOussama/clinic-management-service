@@ -76,6 +76,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /api/v1/doctors/{doctorId}/appointments:
+    get:
+      summary: Retrieve appointments for a specific doctor
+      operationId: getAppointmentsByDoctorId
+      tags:
+        - Appointments
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor to retrieve appointments for
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/v1/doctors/{doctorId}:
     get:
       summary: Retrieve info for a specific doctor
@@ -728,6 +758,9 @@ components:
         appointmentDate:
           type: string
           format: date-time
+        patientId:
+          type: integer
+          format: int64
     AppointmentRequest:
       type: object
       properties:

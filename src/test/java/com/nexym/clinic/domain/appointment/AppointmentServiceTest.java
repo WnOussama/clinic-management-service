@@ -1,6 +1,8 @@
 package com.nexym.clinic.domain.appointment;
 
 import com.nexym.clinic.domain.appointment.exception.AppointmentValidationException;
+import com.nexym.clinic.domain.appointment.model.Appointment;
+import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.patient.exception.PatientNotFoundException;
 import org.assertj.core.api.Assertions;
@@ -90,24 +92,72 @@ class AppointmentServiceTest {
     void should_add_new_appointment_missing_doctor_availabilities_fail() {
         // When
         ThrowableAssert.ThrowingCallable callable = () -> appointmentService.addNewAppointment(1L,
-                1L,
+                2L,
                 LocalDateTime.parse("2025-04-06 14:15:00", formatter));
         // Then
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(AppointmentValidationException.class)
-                .hasMessage("We cannot find any availability for doctor with id '1'");
+                .hasMessage("We cannot find any availability for doctor with id '2'");
     }
 
     @Test
     void should_add_new_appointment_missing_matching_date_range_availability_fail() {
         // When
         ThrowableAssert.ThrowingCallable callable = () -> appointmentService.addNewAppointment(1L,
-                2L,
+                1L,
                 LocalDateTime.parse("2025-04-26 14:15:00", formatter));
         // Then
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(AppointmentValidationException.class)
-                .hasMessage("Doctor with id '2' has any availability matching the appointment date '2025-04-26T14:15'");
+                .hasMessage("Doctor with id '1' has any availability matching the appointment date '2025-04-26T14:15'");
+    }
+
+    @Test
+    void should_find_appointments_by_doctor_id_not_found_fail() {
+        // Given
+        var doctorId = 523L;
+        // When
+        ThrowableAssert.ThrowingCallable callable = () -> appointmentService.getAppointmentByDoctorId(doctorId);
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(DoctorNotFoundException.class)
+                .hasMessage("Doctor with id '523' does not exist");
+    }
+
+    @Test
+    void should_find_appointments_by_doctor_id_availability_not_found_fail() {
+        // Given
+        var doctorId = 2L;
+        // When
+        ThrowableAssert.ThrowingCallable callable = () -> appointmentService.getAppointmentByDoctorId(doctorId);
+        // Then
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(AppointmentValidationException.class)
+                .hasMessage("We cannot find any availability for doctor with id '2'");
+    }
+
+    @Test
+    void should_find_appointments_by_doctor_id_success() {
+        // Given
+        var doctorId = 1L;
+        // When
+        var doctorAppointments = appointmentService.getAppointmentByDoctorId(doctorId);
+        // Then
+        Appointment expectedAppointment = Appointment.builder()
+                .id(1L)
+                .patientId(1L)
+                .availability(Availability.builder()
+                        .id(1L)
+                        .startDate(LocalDateTime.parse("2023-04-24 09:00:00", formatter))
+                        .endDate(LocalDateTime.parse("2023-04-24 18:00:00", formatter))
+                        .build())
+                .appointmentDate(LocalDateTime.parse("2023-04-24 09:00:00", formatter))
+                .creationDate(LocalDateTime.parse("2023-04-23 20:55:54", formatter))
+                .build();
+
+        Appointment actualAppointment = doctorAppointments.get(0);
+
+        Assertions.assertThat(actualAppointment).isEqualTo(expectedAppointment);
     }
 
 }
