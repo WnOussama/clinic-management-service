@@ -36,7 +36,7 @@ public class DoctorServiceImpl implements DoctorService {
             Long ruleId = checkIfGlobalRuleAlreadyExists();
             checkIfSpecialityAlreadyExists(doctor.getSpecialityId());
             doctor.setRuleId(ruleId);
-            return doctorPersistence.createOrUpdate(doctor);
+            return doctorPersistence.addNewDoctor(doctor);
         }
     }
 
@@ -61,7 +61,7 @@ public class DoctorServiceImpl implements DoctorService {
     public void updateDoctorById(Long doctorId, Doctor updateRequest) {
         checkSpecialityIfFilled(updateRequest.getSpecialityId());
         updateRequest.setId(doctorId);
-        doctorPersistence.createOrUpdate(updateRequest);
+        doctorPersistence.updateDoctorDetails(updateRequest);
     }
 
     private void checkSpecialityIfFilled(Long specialityId) {

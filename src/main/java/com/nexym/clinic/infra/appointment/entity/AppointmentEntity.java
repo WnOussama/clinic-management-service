@@ -29,9 +29,8 @@ public class AppointmentEntity {
     private AvailabilityEntity availability;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "patient_id", nullable = false)
     private PatientEntity patient;
-
 
     @Column(name = "prescription", nullable = false)
     private String prescription;

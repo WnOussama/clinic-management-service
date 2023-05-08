@@ -41,8 +41,7 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         var doctor = doctorPersistence.getDoctorById(doctorId)
                 .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%d' not found", doctorId)));
         validateNewAvailabilityDateRange(availability.getStartDate(), availability.getEndDate(), doctor);
-        doctor.getAvailabilities().add(availability);
-        doctorPersistence.createOrUpdate(doctor);
+        doctorPersistence.addNewAvailability(doctor.getId(), availability);
     }
 
     private void validateNewAvailabilityDateRange(LocalDateTime startDate, LocalDateTime endDate, Doctor doctor) {
@@ -52,7 +51,7 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         // validate requested date hours with global rule
         var rule = rulePersistence.findGlobalRule()
                 .orElseThrow(() -> new DoctorValidationException("Global clinic rule does not exist"));
-        if (doNotRespectHoursRules(startDate, endDate, rule.getStartHour(), rule.getStartBreakHour(), rule.getEndBreakHour(), rule.getEndHour())) {
+        if (!doRespectRuleHours(startDate, endDate, rule.getStartHour(), rule.getStartBreakHour(), rule.getEndBreakHour(), rule.getEndHour())) {
             throw new DoctorValidationException(String.format("Availability start date '%s' and end date '%s' do not respect global rule", startDate, endDate));
         }
 
@@ -65,7 +64,7 @@ public class AvailabilityServiceImpl implements AvailabilityService {
             date = date.plusDays(1);
         }
 
-        }
+    }
 
     private void validateAvailabilityDuration(LocalDateTime startDate, LocalDateTime endDate, Long specialityId) {
         var speciality = specialityPersistence.getSpecialityById(specialityId)
@@ -90,20 +89,20 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         }
     }
 
-    private static boolean doNotRespectHoursRules(LocalDateTime startDate, LocalDateTime endDate, int startHour, int startBreakHour, int endBreakHour, int endHour) {
-        return isInRangeDayWorkingHours(startDate, startHour, startBreakHour, endBreakHour, endHour) ||
-                isInRangeDayWorkingHours(endDate, startHour, startBreakHour, endBreakHour, endHour) ||
-                isInBreakTime(startDate, startBreakHour, endBreakHour) ||
-                isInBreakTime(endDate, startBreakHour, endBreakHour);
+    private static boolean doRespectRuleHours(LocalDateTime startDate, LocalDateTime endDate, int startHour, int startBreakHour, int endBreakHour, int endHour) {
+        return isInRangeDayWorkingHours(startDate, startHour, startBreakHour, endBreakHour, endHour) &&
+                isInRangeDayWorkingHours(endDate, startHour, startBreakHour, endBreakHour, endHour) &&
+                !isInBreakTime(startDate, startBreakHour, endBreakHour) &&
+                !isInBreakTime(endDate, startBreakHour, endBreakHour);
     }
 
     private static boolean isInBreakTime(LocalDateTime requestedDate, int startBreakHour, int endBreakHour) {
-        return FormatUtil.isStrictTimeWithinHoursRange(requestedDate, startBreakHour, endBreakHour);
+        return FormatUtil.isTimeWithinHoursRange(requestedDate, startBreakHour, endBreakHour, false);
     }
 
     private static boolean isInRangeDayWorkingHours(LocalDateTime requestedDate, int startHour, int startBreakHour, int endBreakHour, int endHour) {
-        return !FormatUtil.isStrictTimeWithinHoursRange(requestedDate, startHour, startBreakHour) &&
-                !FormatUtil.isStrictTimeWithinHoursRange(requestedDate, endBreakHour, endHour);
+        return FormatUtil.isTimeWithinHoursRange(requestedDate, startHour, startBreakHour, true) ||
+                FormatUtil.isTimeWithinHoursRange(requestedDate, endBreakHour, endHour, true);
     }
 
     private static void checkOverlappingWithExistingAvailabilities(LocalDateTime startDate, LocalDateTime endDate, List<Availability> availabilities) {

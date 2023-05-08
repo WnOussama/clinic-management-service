@@ -13,21 +13,32 @@ public class FormatUtil {
         return myString != null && !myString.isEmpty();
     }
 
-    public static boolean isWithinRange(LocalDateTime requestedDate, LocalDateTime startDate, LocalDateTime endDate) {
-        return !(requestedDate.isBefore(startDate) || requestedDate.isAfter(endDate));
+    public static boolean isBetweenHourRange(LocalDateTime requestedDate,
+                                             LocalDateTime startDate,
+                                             LocalDateTime endDate,
+                                             boolean isInclusive) {
+        if (isInclusive) {
+            return !requestedDate.isBefore(startDate) && !requestedDate.isAfter(endDate);
+        }
+        return requestedDate.isAfter(startDate) && requestedDate.isBefore(endDate);
     }
 
-    public static boolean isStrictTimeWithinHoursRange(LocalDateTime requestedDate, int startHour, int endHour) {
-        return isTimeWithinHoursRange(requestedDate, startHour, endHour, 0L);
+    public static boolean isTimeWithinHoursRange(LocalDateTime requestedDate, int startHour, int endHour, boolean isInclusive) {
+        return isTimeWithinHoursRange(requestedDate, startHour, endHour, isInclusive, 0L);
     }
 
-    public static boolean isTimeWithinHoursRange(LocalDateTime requestedDate, int startHour, int endHour, Long duration) {
-        return FormatUtil.isWithinRange(requestedDate,
+    public static boolean isTimeWithinHoursRange(LocalDateTime requestedDate,
+                                                 int startHour,
+                                                 int endHour,
+                                                 boolean isInclusive,
+                                                 Long duration) {
+        return FormatUtil.isBetweenHourRange(requestedDate,
                 initNewDateWithHour(requestedDate, startHour),
-                initNewDateWithHour(requestedDate, endHour).minusMinutes(duration));
+                initNewDateWithHour(requestedDate, endHour).minusMinutes(duration),
+                isInclusive);
     }
 
-    private static LocalDateTime initNewDateWithHour(LocalDateTime requestedDate, int hour) {
+    public static LocalDateTime initNewDateWithHour(LocalDateTime requestedDate, int hour) {
         return LocalDateTime.of(requestedDate.getYear(), requestedDate.getMonth(), requestedDate.getDayOfMonth(), hour, 0);
     }
 

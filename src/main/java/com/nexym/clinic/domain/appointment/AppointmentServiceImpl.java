@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +50,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private MailService mailService;
 
     @Override
+    @Transactional
     public void addNewAppointment(Long patientId, Long doctorId, LocalDateTime appointmentDate) {
         Patient patient = getPatient(patientId);
         Doctor doctor = getDoctor(doctorId);
@@ -68,14 +70,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         Availability matchingAvailability = findFreeMatchingAvailability(appointmentDate, doctor, appointmentDuration);
 
         // check if patient has already an existing appointment with same date and not cancelled
-        var patientAppointments = patient.getAppointments();
         //TODO (23/04/2023) is it possible to have more than one appointment with same doctor?
-        patientAppointments.add(Appointment.builder()
+        var newAppointment = Appointment.builder()
                 .appointmentDate(appointmentDate)
                 .status(Status.PENDING)
                 .availability(matchingAvailability)
-                .build());
-        patientPersistence.createOrUpdate(patient);
+                .patientId(patientId)
+                .build();
+        patientPersistence.addNewAppointment(patientId, newAppointment);
         sendAppointmentEmailToDoctor(appointmentDate, patient.getFirstName(), patient.getLastName(),
                 doctor.getFirstName(), doctor.getLastName(), doctor.getEmail());
         // TODO 28/04/2023 send confirmation email to the patient
@@ -121,9 +123,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                                                   int endBreakHour,
                                                   int endHour,
                                                   Long appointmentDuration) {
-        return !(FormatUtil.isTimeWithinHoursRange(appointmentDate, startHour, startBreakHour, appointmentDuration) ||
-                FormatUtil.isTimeWithinHoursRange(appointmentDate, endBreakHour, endHour, appointmentDuration)) ||
-                FormatUtil.isStrictTimeWithinHoursRange(appointmentDate, startBreakHour, endBreakHour);
+        return !(FormatUtil.isTimeWithinHoursRange(appointmentDate, startHour, startBreakHour, true, appointmentDuration) ||
+                FormatUtil.isTimeWithinHoursRange(appointmentDate, endBreakHour, endHour, true, appointmentDuration)) ||
+                FormatUtil.isTimeWithinHoursRange(appointmentDate, startBreakHour, endBreakHour, false);
     }
 
     private Availability findFreeMatchingAvailability(LocalDateTime appointmentDate, Doctor doctor, Long appointmentDuration) {
@@ -132,7 +134,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new AppointmentValidationException(String.format("We cannot find any availability for doctor with id '%s'", doctor.getId()));
 
         return availabilities.stream()
-                .filter(availability -> FormatUtil.isWithinRange(appointmentDate, availability.getStartDate(), availability.getEndDate()) && isFree(availability.getId(), appointmentDate, appointmentDuration))
+                .filter(availability -> FormatUtil.isBetweenHourRange(appointmentDate, availability.getStartDate(), availability.getEndDate(), true) && isFree(availability.getId(), appointmentDate, appointmentDuration))
                 .findFirst()
                 .orElseThrow(() -> new AppointmentValidationException(String.format("Doctor with id '%s' has any availability matching the appointment date '%s'",
                         doctor.getId(),
@@ -152,8 +154,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     private boolean isFree(Long availabilityId, LocalDateTime appointmentDate, Long appointmentDuration) {
         var appointmentsByAvailability = appointmentPersistence.getByAvailabilityId(availabilityId);
         return appointmentsByAvailability.stream()
-                .noneMatch(appointment -> FormatUtil.isWithinRange(appointmentDate,
+                .noneMatch(appointment -> FormatUtil.isBetweenHourRange(appointmentDate,
                         appointment.getAppointmentDate(),
-                        appointment.getAppointmentDate().plusMinutes(appointmentDuration)) && !Boolean.TRUE.equals(appointment.getCancelled()));
+                        appointment.getAppointmentDate().plusMinutes(appointmentDuration), true) && !Boolean.TRUE.equals(appointment.getCancelled()));
     }
 }
