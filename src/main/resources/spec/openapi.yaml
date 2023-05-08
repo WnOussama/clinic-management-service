@@ -61,7 +61,7 @@ paths:
 #            enum:
 #              - 3 days
 #              - 5 days
-#              - 1 week
+#              - 7 days
       responses:
         '200':
           description: List of doctors
