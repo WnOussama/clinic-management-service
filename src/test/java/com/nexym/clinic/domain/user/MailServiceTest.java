@@ -49,8 +49,6 @@ class MailServiceTest {
         expectedMessage.setSubject(subject);
         expectedMessage.setTo(recipient);
         expectedMessage.setText(testMessage);
-        //TODO 06/05/2023 fix test application properties loading
-//        expectedMessage.setFrom("healthystepsclinic1@gmail.com");
         Assertions.assertThat(mailMessageCaptor.getValue()).isEqualTo(expectedMessage);
     }
 

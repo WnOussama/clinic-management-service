@@ -2,7 +2,8 @@ spring:
   main:
     allow-bean-definition-overriding: true
   mail:
-    username: healthystepsclinic1@gmail.com
+    username: test@yopmail.com
+    password: TBD
   jpa:
     hibernate:
       ddl-auto: validate
