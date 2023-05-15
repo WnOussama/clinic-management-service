@@ -75,6 +75,7 @@ public class WebSecurityConfig {
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                .cors().and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

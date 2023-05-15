@@ -61,6 +61,14 @@ public class ClinicManagementExceptionHandler {
                 exception.getSubErrors());
     }
 
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<ClinicApiError> handleIllegalArgumentException(IllegalArgumentException exception, ServletWebRequest httpServletRequest) {
+        return buildApiErrorResponse(httpServletRequest.getRequest().getRequestURI(),
+                BAD_REQUEST,
+                exception.getMessage(),
+                Collections.emptyList());
+    }
+
     @ExceptionHandler(value = TechnicalException.class)
     public ResponseEntity<ClinicApiError> handleTechnicalException(TechnicalException exception, ServletWebRequest httpServletRequest) {
         log.error(String.format("Intercepted exception: %s", exception.getMessage()));
@@ -70,4 +78,16 @@ public class ClinicManagementExceptionHandler {
                 String.format("Technical error in Clinic Management Service #%s", uuid),
                 Collections.emptyList());
     }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<ClinicApiError> handleUnknownException(Exception exception, ServletWebRequest httpServletRequest) {
+        log.error(String.format("Intercepted exception: %s", exception.getMessage()));
+        var uuid = UUID.randomUUID();
+        return buildApiErrorResponse(httpServletRequest.getRequest().getRequestURI(),
+                INTERNAL_SERVER_ERROR,
+                String.format("Unknown error in Clinic Management Service #%s", uuid),
+                Collections.emptyList());
+    }
+
+
 }

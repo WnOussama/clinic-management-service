@@ -28,8 +28,11 @@ public class DoctorResource implements DoctorsApi {
     }
 
     @Override
-    public ResponseEntity<DoctorListResponse> searchDoctors(Integer page, Integer size) {
-        return ResponseEntity.ok(doctorWsMapper.mapToDoctorResponseList(doctorService.getDoctorList(page, size)));
+    public ResponseEntity<DoctorListResponse> searchDoctors(Integer page, Integer size, Long specialityId, String availableWithinNext) {
+        return ResponseEntity.ok(doctorWsMapper.mapToDoctorResponseList(doctorService.getDoctorList(doctorWsMapper.mapToEnum(availableWithinNext),
+                specialityId,
+                page,
+                size)));
     }
 
     @Override

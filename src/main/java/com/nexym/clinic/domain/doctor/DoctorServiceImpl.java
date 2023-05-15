@@ -2,6 +2,7 @@ package com.nexym.clinic.domain.doctor;
 
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.exception.DoctorValidationException;
+import com.nexym.clinic.domain.doctor.model.AvailableWithinNext;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
@@ -41,8 +42,10 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorList getDoctorList(Integer page, Integer size) {
-        return doctorPersistence.getDoctorList(page, size);
+    public DoctorList getDoctorList(AvailableWithinNext availableWithinNext, Long specialityId, Integer page, Integer size) {
+        var globalRule = rulePersistence.findGlobalRule()
+                .orElseThrow(() -> new TechnicalException("Global clinic rule does not exist"));
+        return doctorPersistence.getDoctorList(availableWithinNext, specialityId, globalRule.getEndHour(), page, size);
     }
 
     @Override
