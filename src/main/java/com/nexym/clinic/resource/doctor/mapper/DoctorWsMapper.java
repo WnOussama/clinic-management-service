@@ -3,6 +3,7 @@ package com.nexym.clinic.resource.doctor.mapper;
 import com.nexym.clinic.api.model.Doctor;
 import com.nexym.clinic.api.model.DoctorListResponse;
 import com.nexym.clinic.api.model.DoctorRequest;
+import com.nexym.clinic.domain.doctor.model.AvailableWithinNext;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import org.mapstruct.*;
 
@@ -34,4 +35,6 @@ public interface DoctorWsMapper {
     Doctor map(com.nexym.clinic.domain.doctor.model.Doctor doctor);
 
     DoctorListResponse mapToDoctorResponseList(DoctorList doctorList);
+
+    AvailableWithinNext mapToEnum(String availableWithinNext);
 }

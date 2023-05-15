@@ -5,6 +5,7 @@ import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.domain.user.exception.UserValidationException;
 import com.nexym.clinic.domain.user.model.Civility;
+import com.nexym.clinic.resource.doctor.mapper.DoctorWsMapper;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,9 @@ class DoctorServiceTest {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private DoctorWsMapper doctorWsMapper;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -78,7 +82,7 @@ class DoctorServiceTest {
 
     @Test
     void should_search_doctors_success() {
-        var doctorList = doctorService.getDoctorList(0, 10);
+        var doctorList = doctorService.getDoctorList(doctorWsMapper.mapToEnum("TODAY"), 1L, 0, 10);
         // Then
         var items = List.of(Doctor.DoctorBuilder()
                 .id(1L)

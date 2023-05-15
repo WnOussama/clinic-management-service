@@ -1,6 +1,7 @@
 package com.nexym.clinic.domain.doctor.port;
 
 import com.nexym.clinic.domain.availability.model.Availability;
+import com.nexym.clinic.domain.doctor.model.AvailableWithinNext;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 
@@ -16,7 +17,7 @@ public interface DoctorPersistence {
 
     boolean existsByUserEmail(String email);
 
-    DoctorList getDoctorList(Integer page, Integer size);
+    DoctorList getDoctorList(AvailableWithinNext availableWithinNext, Long specialityId, Integer endHour, Integer page, Integer size);
 
     Optional<Doctor> getDoctorById(Long doctorId);
 

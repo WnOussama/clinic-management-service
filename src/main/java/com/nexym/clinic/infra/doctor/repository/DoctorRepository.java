@@ -2,6 +2,7 @@ package com.nexym.clinic.infra.doctor.repository;
 
 import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
+import com.nexym.clinic.domain.doctor.model.AvailableWithinNext;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
@@ -12,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Service
@@ -51,11 +54,29 @@ public class DoctorRepository implements DoctorPersistence {
     }
 
     @Override
-    public DoctorList getDoctorList(Integer page, Integer size) {
+    public DoctorList getDoctorList(AvailableWithinNext availableWithinNext, Long specialityId, Integer endHour, Integer page, Integer size) {
         var pageable = PageRequest.of(page, size);
-        var doctorEntityList = doctorDao.findAll(pageable);
+        var before = getAvailableBeforeDate(availableWithinNext, endHour);
+        var doctorEntityList = doctorDao.findAllBySpecialityAndFreeAvailabilityDate(specialityId, before, pageable);
         return doctorEntityMapper.mapToModelList(doctorEntityList);
     }
+
+    private LocalDateTime getAvailableBeforeDate(AvailableWithinNext availableWithinNext, Integer endHour) {
+        if (availableWithinNext != null) {
+            var today = LocalDateTime.now();
+            return switch (availableWithinNext) {
+                case TODAY -> getEndOfDay(today, endHour);
+                case THREE_DAYS -> getEndOfDay(today.plusDays(3), endHour);
+                case ONE_WEEK -> getEndOfDay(today.plusDays(7), endHour);
+            };
+        }
+        return null;
+    }
+
+    private LocalDateTime getEndOfDay(LocalDateTime date, Integer endHour) {
+        return LocalDateTime.of(date.toLocalDate(), LocalTime.of(endHour, 0));
+    }
+
 
     @Override
     public Optional<Doctor> getDoctorById(Long doctorId) {

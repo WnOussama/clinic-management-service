@@ -22,7 +22,6 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +49,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     private MailService mailService;
 
     @Override
-    @Transactional
     public void addNewAppointment(Long patientId, Long doctorId, LocalDateTime appointmentDate) {
         Patient patient = getPatient(patientId);
         Doctor doctor = getDoctor(doctorId);
@@ -78,8 +76,15 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .patientId(patientId)
                 .build();
         patientPersistence.addNewAppointment(patientId, newAppointment);
+        // asynchronously send emails
+        sendAppointmentConfirmation(appointmentDate, patient, doctor);
+    }
+
+    private void sendAppointmentConfirmation(LocalDateTime appointmentDate, Patient patient, Doctor doctor) {
+        // send doctor confirmation email
         sendAppointmentEmailToDoctor(appointmentDate, patient.getFirstName(), patient.getLastName(),
                 doctor.getFirstName(), doctor.getLastName(), doctor.getEmail());
+        // send patient confirmation email
         sendAppointmentConfirmationEmailToPatient(appointmentDate, patient.getFirstName(), patient.getLastName(),
                 doctor.getFirstName(), doctor.getLastName(), patient.getEmail());
     }

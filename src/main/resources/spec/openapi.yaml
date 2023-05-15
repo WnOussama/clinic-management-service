@@ -46,22 +46,23 @@ paths:
           schema:
             type: integer
             default: 10
-#        - name: speciality
-#          in: query
-#          description: Filter by speciality
-#          required: false
-#          schema:
-#            $ref: "#/components/schemas/Speciality"
-#        - name: availability
-#          in: query
-#          description: Filter by availability
-#          required: false
-#          schema:
-#            type: string
-#            enum:
-#              - 3 days
-#              - 5 days
-#              - 7 days
+        - name: specialityId
+          in: query
+          description: Filter by speciality
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: availableWithinNext
+          in: query
+          description: Filter by availability
+          required: false
+          schema:
+            type: string
+            enum:
+              - TODAY
+              - THREE_DAYS
+              - ONE_WEEK
       responses:
         '200':
           description: List of doctors
