@@ -172,7 +172,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         var body = String.format("Dear %s,%n%nYour bill with a consultation fee of %d€ is due by %s.%n%nThank you for transferring the money to  Dr. %s with bank account number %s!%n%nSincerely,%nThe Healthy Steps Clinic",
                 patientFullName, appointmentFee, appointmentDate.toString(), doctorFullName, iban);
         // Send email to the patient
-        sendEmail(body, subject, patientEmail);
+        sendEmail(subject, body, patientEmail);
     }
 
     private void sendEmail(String subject, String body, String recipient) {
