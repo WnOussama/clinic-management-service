@@ -19,6 +19,7 @@ class DoctorModelTest {
                 .civility(Civility.MRS)
                 .address("23 Rue des Petits Champs, 75001 Paris, France")
                 .specialityId(1L)
+                .iban("FR7630001007941234567890185")
                 .email("jessie.doe@mail.com")
                 .password("Toto2024")
                 .build();
@@ -34,6 +35,7 @@ class DoctorModelTest {
                 .civility(Civility.MRS)
                 .address("23 Rue des Petits Champs, 75001 Paris, France")
                 .specialityId(1L)
+                .iban("FR7630001007941234567890185")
                 .email("jessie.doe@mail.com")
                 .password("Toto2024")
                 .build();
@@ -52,6 +54,8 @@ class DoctorModelTest {
                         "Password should be filled",
                         "Phone number should be filled",
                         "Address should be filled",
-                        "Speciality should be filled"));
+                        "Iban should be filled",
+                        "Speciality should be filled"
+                        ));
     }
 }

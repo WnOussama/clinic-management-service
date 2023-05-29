@@ -146,6 +146,7 @@ class AppointmentServiceTest {
         Appointment expectedAppointment = Appointment.builder()
                 .id(1L)
                 .patientId(1L)
+                .doctorId(1L)
                 .availability(Availability.builder()
                         .id(1L)
                         .startDate(LocalDateTime.parse("2023-04-24 09:00:00", formatter))

@@ -21,4 +21,7 @@ public class SpecialityEntity {
     @Column(name = "appointment_duration", nullable = false)
     private Long appointmentDuration;
 
+    @Column(name = "appointment_fee", nullable = false)
+    private Long appointmentFee;
+
 }

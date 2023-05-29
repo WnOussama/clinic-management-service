@@ -9,3 +9,7 @@ databaseChangeLog:
       file: db/changelog/2023-04-11-manage-appointments.yaml
   - include:
       file: db/sql/2023-04-11-add-referentials-data.sql
+  - include:
+      file: db/changelog/2023-05-22-add-bills.yaml
+  - include:
+      file: db/sql/2023-05-29-add-appointment-fee.sql

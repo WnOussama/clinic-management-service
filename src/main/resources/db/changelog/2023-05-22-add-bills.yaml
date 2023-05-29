@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-05-22-add-bills-info
+      author: oussamaouannassi@gmail.com
+      changes:
+        - addColumn:
+            tableName: cm_doctors
+            columns:
+              - column:
+                  name: iban
+                  type: varchar2
+                  defaultValue: 'FR7630001007941234567890185'
+                  constraints:
+                    nullable: false
+        - addColumn:
+            tableName: cm_specialities
+            columns:
+              - column:
+                  name: appointment_fee
+                  type: bigint
+                  defaultValue: 50
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: cm_bills
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+              - column:
+                  name: creation_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar2
+                  constraints:
+                    nullable: false
+              - column:
+                  name: doctor_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk1_doctors
+                    references: cm_doctors(id)
+        - createSequence:
+            cycle: false
+            dataType: bigint
+            incrementBy: 50
+            minValue: 1
+            sequenceName: cm_bills_seq
+            startValue: 1
+      rollback:
+        - dropColumn:
+            columnName: iban
+            tableName: cm_doctors
+        - dropColumn:
+            columnName: appointment_fee
+            tableName: cm_specialities
+        - dropTable:
+            tableName: cm_bills
+        - dropSequence:
+          sequenceName: cm_bills_seq

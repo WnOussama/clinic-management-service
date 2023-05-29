@@ -71,7 +71,7 @@ public class ClinicManagementExceptionHandler {
 
     @ExceptionHandler(value = TechnicalException.class)
     public ResponseEntity<ClinicApiError> handleTechnicalException(TechnicalException exception, ServletWebRequest httpServletRequest) {
-        log.error(String.format("Intercepted exception: %s", exception.getMessage()));
+        log.error(String.format("Intercepted exception: %s", exception.getMessage()), exception);
         var uuid = UUID.randomUUID();
         return buildApiErrorResponse(httpServletRequest.getRequest().getRequestURI(),
                 INTERNAL_SERVER_ERROR,
@@ -81,7 +81,7 @@ public class ClinicManagementExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ClinicApiError> handleUnknownException(Exception exception, ServletWebRequest httpServletRequest) {
-        log.error(String.format("Intercepted exception: %s", exception.getMessage()));
+        log.error(String.format("Intercepted exception: %s", exception.getMessage()), exception);
         var uuid = UUID.randomUUID();
         return buildApiErrorResponse(httpServletRequest.getRequest().getRequestURI(),
                 INTERNAL_SERVER_ERROR,
