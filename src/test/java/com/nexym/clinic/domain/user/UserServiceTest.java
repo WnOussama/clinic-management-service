@@ -32,36 +32,6 @@ class UserServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Test
-    void should_find_user_by_id_success() {
-        // Given
-        var userId = 1L;
-        // When
-        var foundUser = userService.getUserById(userId);
-        // Then
-        Assertions.assertThat(foundUser).isEqualTo(getUser(Civility.MR,
-                "John",
-                "Doe",
-                "01122334455",
-                "john.doe@mail.com",
-                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W",
-                "2023-02-21 10:50:54"));
-    }
-
-    @Test
-    void should_authenticate_success() {
-        // Given
-        var loginCredential = LoginCredential.builder()
-                .email("john.doe@mail.com")
-                .password("password")
-                .build();
-        // When
-        var auth = userService.authenticate(loginCredential, authenticationManager);
-        // Then
-        Assertions.assertThat(auth).isNotNull();
-        Assertions.assertThat(auth.getId()).isEqualTo(1L);
-    }
-
-    @Test
     void should_authenticate_user_not_found_fail() {
         // Given
         var loginCredential = LoginCredential.builder()
@@ -95,6 +65,36 @@ class UserServiceTest {
         Assertions.assertThatThrownBy(callable)
                 .isInstanceOf(AccessDeniedException.class)
                 .hasMessage("Access to this resource is denied");
+    }
+
+    @Test
+    void should_authenticate_success() {
+        // Given
+        var loginCredential = LoginCredential.builder()
+                .email("john.doe@mail.com")
+                .password("password")
+                .build();
+        // When
+        var auth = userService.authenticate(loginCredential, authenticationManager);
+        // Then
+        Assertions.assertThat(auth).isNotNull();
+        Assertions.assertThat(auth.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void should_find_user_by_id_success() {
+        // Given
+        var userId = 1L;
+        // When
+        var foundUser = userService.getUserById(userId);
+        // Then
+        Assertions.assertThat(foundUser).isEqualTo(getUser(Civility.MR,
+                "John",
+                "Doe",
+                "01122334455",
+                "john.doe@mail.com",
+                "$2a$10$PRlKa/dbKFsBT4IuIbCPKOvOx7GZDjLDi0uLCe9Mgc13QO8OkF37W",
+                "2023-02-21 10:50:54"));
     }
 
     @Test

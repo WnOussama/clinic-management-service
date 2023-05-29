@@ -9,6 +9,9 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -31,5 +34,11 @@ public class Patient extends User {
         super(userId, civility, firstName, lastName, email, password, phoneNumber, creationDate);
         this.id = id;
         this.appointments = appointments;
+    }
+
+    public String getFullName() {
+        return Stream.of(getFirstName(), getLastName())
+                .filter(x -> x != null && !x.isEmpty())
+                .collect(joining(" "));
     }
 }

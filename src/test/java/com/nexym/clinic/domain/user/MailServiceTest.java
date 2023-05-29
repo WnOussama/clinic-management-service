@@ -26,6 +26,26 @@ class MailServiceTest {
     private JavaMailSender mailSender;
 
     @Test
+    void should_send_mail_fail() {
+        // Arrange
+        MailDetail mailDetail = new MailDetail();
+        mailDetail.setRecipient("recipient@example.com");
+        mailDetail.setSubject("Test Subject");
+        mailDetail.setMessageBody("Test Message");
+
+        // mock mailSender.send() method to throw an exception
+        doThrow(new RuntimeException()).when(mailSender).send(any(SimpleMailMessage.class));
+
+        // Act
+        ThrowableAssert.ThrowingCallable callable = () -> mailService.sendMail(mailDetail);
+
+        // Assert
+        Assertions.assertThatThrownBy(callable)
+                .isInstanceOf(TechnicalException.class)
+                .hasMessageContaining("Error while Sending email");
+    }
+
+    @Test
     void test_send_mail_success() {
         // Arrange
         String subject = "Test Subject";
@@ -52,24 +72,5 @@ class MailServiceTest {
         Assertions.assertThat(mailMessageCaptor.getValue()).isEqualTo(expectedMessage);
     }
 
-    @Test
-    void test_send_mail_failure() {
-        // Arrange
-        MailDetail mailDetail = new MailDetail();
-        mailDetail.setRecipient("recipient@example.com");
-        mailDetail.setSubject("Test Subject");
-        mailDetail.setMessageBody("Test Message");
-
-        // mock mailSender.send() method to throw an exception
-        doThrow(new RuntimeException()).when(mailSender).send(any(SimpleMailMessage.class));
-
-        // Act
-        ThrowableAssert.ThrowingCallable callable = () -> mailService.sendMail(mailDetail);
-
-        // Assert
-        Assertions.assertThatThrownBy(callable)
-                .isInstanceOf(TechnicalException.class)
-                .hasMessageContaining("Error while Sending email");
-    }
 }
 

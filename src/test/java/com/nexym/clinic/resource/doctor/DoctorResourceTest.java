@@ -61,6 +61,7 @@ class DoctorResourceTest {
                 .firstName("Jessie")
                 .lastName("Doe")
                 .specialityId(1L)
+                .iban("FR7630001007941234567890185")
                 .password("myPassword");
         mockMvc.perform(post(registerDoctorUrl())
                         .contentType(MediaType.APPLICATION_JSON)

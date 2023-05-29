@@ -25,26 +25,31 @@ class SpecialityServiceTest {
                         .id(1L)
                         .name("Médecin généraliste")
                         .appointmentDuration(15L)
+                        .appointmentFee(50L)
                         .build(),
                 Speciality.builder()
                         .id(51L)
                         .name("Orthopédiste")
                         .appointmentDuration(30L)
+                        .appointmentFee(60L)
                         .build(),
                 Speciality.builder()
                         .id(101L)
                         .name("Ophtalmologue")
                         .appointmentDuration(30L)
+                        .appointmentFee(60L)
                         .build(),
                 Speciality.builder()
                         .id(151L)
                         .name("Pédiatre")
                         .appointmentDuration(45L)
+                        .appointmentFee(80L)
                         .build(),
                 Speciality.builder()
                         .id(201L)
                         .name("Dentiste")
                         .appointmentDuration(60L)
+                        .appointmentFee(100L)
                         .build()));
     }
 }

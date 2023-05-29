@@ -1,6 +1,7 @@
 package com.nexym.clinic.infra.doctor.entity;
 
 import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
+import com.nexym.clinic.infra.bill.entity.BillEntity;
 import com.nexym.clinic.infra.rule.entity.RuleEntity;
 import com.nexym.clinic.infra.speciality.entity.SpecialityEntity;
 import com.nexym.clinic.infra.user.entity.UserEntity;
@@ -24,6 +25,9 @@ public class DoctorEntity {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Column(name = "iban", nullable = false)
+    private String iban;
+
     @OneToOne
     @JoinColumn(name = "speciality_id", nullable = false)
     private SpecialityEntity speciality;
@@ -39,4 +43,8 @@ public class DoctorEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Set<AvailabilityEntity> availabilities;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private Set<BillEntity> bills;
 }

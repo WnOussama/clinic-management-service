@@ -5,6 +5,7 @@ import com.nexym.clinic.domain.appointment.model.Appointment;
 import com.nexym.clinic.domain.appointment.model.Status;
 import com.nexym.clinic.domain.appointment.port.AppointmentPersistence;
 import com.nexym.clinic.domain.availability.model.Availability;
+import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
@@ -19,7 +20,6 @@ import com.nexym.clinic.domain.user.mail.MailService;
 import com.nexym.clinic.utils.FormatUtil;
 import com.nexym.clinic.utils.exception.TechnicalException;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +61,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         var speciality = specialityPersistence.getSpecialityById(doctor.getSpecialityId())
                 .orElseThrow(() -> new SpecialityNotFoundException(String.format("Speciality with id '%s' does not exist", doctor.getSpecialityId())));
         var appointmentDuration = speciality.getAppointmentDuration();
+        var appointmentFee = speciality.getAppointmentFee();
         if (doNotRespectHoursRules(appointmentDate, rule.getStartHour(), rule.getStartBreakHour(), rule.getEndBreakHour(), rule.getEndHour(), appointmentDuration)) {
             throw new AppointmentValidationException(String.format("Requested appointment date '%s' does not respect rule hours", appointmentDate));
         }
@@ -78,38 +79,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         patientPersistence.addNewAppointment(patientId, newAppointment);
         // asynchronously send emails
         sendAppointmentConfirmation(appointmentDate, patient, doctor);
-    }
-
-    private void sendAppointmentConfirmation(LocalDateTime appointmentDate, Patient patient, Doctor doctor) {
-        // send doctor confirmation email
-        sendAppointmentEmailToDoctor(appointmentDate, patient.getFirstName(), patient.getLastName(),
-                doctor.getFirstName(), doctor.getLastName(), doctor.getEmail());
-        // send patient confirmation email
-        sendAppointmentConfirmationEmailToPatient(appointmentDate, patient.getFirstName(), patient.getLastName(),
-                doctor.getFirstName(), doctor.getLastName(), patient.getEmail());
-    }
-
-    private void sendAppointmentConfirmationEmailToPatient(LocalDateTime appointmentDate, String patientFirstName, String patientLastName,
-                                                           String doctorFirstName, String doctorLastName, String patientEmail) {
-        // Construct the email message
-        MailDetail mailDetail = constructConfirmationMessageDetail(appointmentDate,
-                patientFirstName.concat(patientLastName),
-                doctorFirstName.concat(doctorLastName),
-                patientEmail);
-        // Send email to the patient
-        mailService.sendMail(mailDetail);
-    }
-
-    @NotNull
-    private static MailDetail constructConfirmationMessageDetail(LocalDateTime appointmentDate, String patientName, String doctorName, String patientEmail) {
-        var subject = "Appointment confirmation";
-        var body = String.format("Dear %s,%n%nYour appointment with Dr. %s has been scheduled for %s.%n%nSincerely,%nThe Healthy Steps Clinic",
-                patientName, doctorName, appointmentDate.toString());
-        return MailDetail.builder()
-                .recipient(patientEmail)
-                .subject(subject)
-                .messageBody(body)
+        var newBill = Bill.builder()
+                .appointmentFee(appointmentFee)
+                .status(Status.PENDING)
                 .build();
+        doctorPersistence.addNewBill(doctorId, newBill);
+        sendBillConfirmation(appointmentDate, patient.getFullName(), doctor.getFullName(), patient.getEmail(), appointmentFee, doctor.getIban());
     }
 
     @Override
@@ -121,29 +96,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         return availabilities.stream()
                 .flatMap(availability -> appointmentPersistence.getByAvailabilityId(availability.getId()).stream())
                 .toList();
-    }
-
-    private void sendAppointmentEmailToDoctor(LocalDateTime appointmentDate, String patientFirstName, String patientLastName,
-                                              String doctorFirstName, String doctorLastName, String doctorEmail) {
-        // Construct the email message
-        MailDetail mailDetail = constructMessageDetail(appointmentDate,
-                patientFirstName.concat(patientLastName),
-                doctorFirstName.concat(doctorLastName),
-                doctorEmail);
-        // Send email to the doctor
-        mailService.sendMail(mailDetail);
-    }
-
-    @NotNull
-    private static MailDetail constructMessageDetail(LocalDateTime appointmentDate, String patientName, String doctorName, String doctorEmail) {
-        var subject = "New appointment request";
-        var body = String.format("Dear Dr. %s,%n%nA new appointment has been requested for %s at %s.%n%nSincerely,%nThe Healthy Steps Clinic",
-                doctorName, patientName, appointmentDate.toString());
-        return MailDetail.builder()
-                .recipient(doctorEmail)
-                .subject(subject)
-                .messageBody(body)
-                .build();
     }
 
     private static boolean doNotRespectHoursRules(LocalDateTime appointmentDate,
@@ -186,5 +138,49 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .noneMatch(appointment -> FormatUtil.isBetweenHourRange(appointmentDate,
                         appointment.getAppointmentDate(),
                         appointment.getAppointmentDate().plusMinutes(appointmentDuration), true) && !Boolean.TRUE.equals(appointment.getCancelled()));
+    }
+
+
+    private void sendAppointmentConfirmation(LocalDateTime appointmentDate, Patient patient, Doctor doctor) {
+        // send doctor confirmation email
+        sendAppointmentEmailToDoctor(appointmentDate, patient.getFullName(), doctor.getFullName(), doctor.getEmail());
+        // send patient confirmation email
+        sendAppointmentConfirmationEmailToPatient(appointmentDate, patient.getFullName(), doctor.getFullName(), patient.getEmail());
+    }
+
+    private void sendAppointmentEmailToDoctor(LocalDateTime appointmentDate, String patientFullName, String doctorFullName, String doctorEmail) {
+        // Construct the email message
+        var subject = "New appointment request";
+        var body = String.format("Dear Dr. %s,%n%nA new appointment has been requested for %s at %s.%n%nSincerely,%nThe Healthy Steps Clinic",
+                doctorFullName, patientFullName, appointmentDate.toString());
+        // Send email to the doctor
+        sendEmail(subject, body, doctorEmail);
+    }
+
+    private void sendAppointmentConfirmationEmailToPatient(LocalDateTime appointmentDate, String patientFullName, String doctorFullName, String patientEmail) {
+        // Construct the email message
+        var subject = "Appointment confirmation";
+        var body = String.format("Dear %s,%n%nYour appointment with Dr. %s has been scheduled for %s.%n%nSincerely,%nThe Healthy Steps Clinic",
+                patientFullName, doctorFullName, appointmentDate.toString());
+        // Send email to the patient
+        sendEmail(subject, body, patientEmail);
+    }
+
+    private void sendBillConfirmation(LocalDateTime appointmentDate, String patientFullName, String doctorFullName, String patientEmail, Long appointmentFee, String iban) {
+        // Construct the email message
+        var subject = "Bill receipt";
+        var body = String.format("Dear %s,%n%nYour bill with a consultation fee of %d€ is due by %s.%n%nThank you for transferring the money to  Dr. %s with bank account number %s!%n%nSincerely,%nThe Healthy Steps Clinic",
+                patientFullName, appointmentFee, appointmentDate.toString(), doctorFullName, iban);
+        // Send email to the patient
+        sendEmail(body, subject, patientEmail);
+    }
+
+    private void sendEmail(String subject, String body, String recipient) {
+        var mailDetail = MailDetail.builder()
+                .recipient(recipient)
+                .subject(subject)
+                .messageBody(body)
+                .build();
+        mailService.sendMail(mailDetail);
     }
 }

@@ -16,12 +16,14 @@ import java.util.List;
 public interface AppointmentEntityMapper {
 
     @Mapping(target = "patientId", source = "patient.id")
+    @Mapping(target = "doctorId", source = "availability.doctor.id")
     Appointment mapToModel(AppointmentEntity appointmentEntity);
 
     @Mapping(target = "patient", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     AppointmentEntity mapToEntity(Appointment appointmentModel);
 
+    @Mapping(target = "doctor", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     AvailabilityEntity mapToAvailabilityEntity(Availability availability);

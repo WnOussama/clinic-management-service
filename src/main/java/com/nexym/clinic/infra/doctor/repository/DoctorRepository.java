@@ -1,12 +1,14 @@
 package com.nexym.clinic.infra.doctor.repository;
 
 import com.nexym.clinic.domain.availability.model.Availability;
+import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.model.AvailableWithinNext;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
 import com.nexym.clinic.infra.doctor.dao.DoctorDao;
+import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
 import com.nexym.clinic.infra.doctor.mapper.DoctorEntityMapper;
 import com.nexym.clinic.infra.user.dao.UserDao;
 import lombok.AllArgsConstructor;
@@ -34,17 +36,21 @@ public class DoctorRepository implements DoctorPersistence {
 
     @Override
     public void updateDoctorDetails(Doctor doctor) {
-        var existingDoctor = doctorDao.findById(doctor.getId())
-                .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%s' does not exist", doctor.getId())));
+        var existingDoctor = getDoctorEntityById(doctor.getId());
         doctorEntityMapper.update(existingDoctor, doctor);
-        doctorDao.save(existingDoctor);
     }
 
     @Override
     public void addNewAvailability(Long doctorId, Availability availability) {
-        var existingDoctor = doctorDao.findById(doctorId)
-                .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%s' does not exist", doctorId)));
+        var existingDoctor = getDoctorEntityById(doctorId);
         existingDoctor.getAvailabilities().add(doctorEntityMapper.map(availability));
+        doctorDao.save(existingDoctor);
+    }
+
+    @Override
+    public void addNewBill(Long doctorId, Bill bill) {
+        var existingDoctor = getDoctorEntityById(doctorId);
+        existingDoctor.getBills().add(doctorEntityMapper.map(bill));
         doctorDao.save(existingDoctor);
     }
 
@@ -59,6 +65,21 @@ public class DoctorRepository implements DoctorPersistence {
         var before = getAvailableBeforeDate(availableWithinNext, endHour);
         var doctorEntityList = doctorDao.findAllBySpecialityAndFreeAvailabilityDate(specialityId, before, pageable);
         return doctorEntityMapper.mapToModelList(doctorEntityList);
+    }
+
+    @Override
+    public Optional<Doctor> getDoctorById(Long doctorId) {
+        return doctorDao.findById(doctorId).map(doctorEntityMapper::mapToModel);
+    }
+
+    @Override
+    public void deleteDoctorById(Long doctorId) {
+        doctorDao.deleteById(doctorId);
+    }
+
+    @Override
+    public Optional<Doctor> getDoctorByEmail(String email) {
+        return doctorDao.findByUserEmail(email).map(doctorEntityMapper::mapToModel);
     }
 
     private LocalDateTime getAvailableBeforeDate(AvailableWithinNext availableWithinNext, Integer endHour) {
@@ -77,19 +98,8 @@ public class DoctorRepository implements DoctorPersistence {
         return LocalDateTime.of(date.toLocalDate(), LocalTime.of(endHour, 0));
     }
 
-
-    @Override
-    public Optional<Doctor> getDoctorById(Long doctorId) {
-        return doctorDao.findById(doctorId).map(doctorEntityMapper::mapToModel);
-    }
-
-    @Override
-    public void deleteDoctorById(Long doctorId) {
-        doctorDao.deleteById(doctorId);
-    }
-
-    @Override
-    public Optional<Doctor> getDoctorByEmail(String email) {
-        return doctorDao.findByUserEmail(email).map(doctorEntityMapper::mapToModel);
+    private DoctorEntity getDoctorEntityById(Long doctorId) {
+        return doctorDao.findById(doctorId)
+                .orElseThrow(() -> new DoctorNotFoundException(String.format("Doctor with id '%s' does not exist", doctorId)));
     }
 }

@@ -10,4 +10,5 @@ public class Speciality {
     private Long id;
     private String name;
     private Long appointmentDuration;
+    private Long appointmentFee;
 }
