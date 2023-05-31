@@ -69,7 +69,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         Availability matchingAvailability = findFreeMatchingAvailability(appointmentDate, doctor, appointmentDuration);
 
         // check if patient has already an existing appointment with same date and not cancelled
-        //TODO (23/04/2023) is it possible to have more than one appointment with same doctor?
+        patientHasAnyAppointmentWithSameDate(patientId, appointmentDate, patient);
+        // check if doctor has already an existing appointment with same date and not cancelled
+        doctorHasAnyAppointmentWithSameDate(doctorId, appointmentDate);
+        // add new appointment to patient
         var newAppointment = Appointment.builder()
                 .appointmentDate(appointmentDate)
                 .status(Status.PENDING)
@@ -85,6 +88,32 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .build();
         doctorPersistence.addNewBill(doctorId, newBill);
         sendBillConfirmation(appointmentDate, patient.getFullName(), doctor.getFullName(), patient.getEmail(), appointmentFee, doctor.getIban());
+    }
+
+    private void doctorHasAnyAppointmentWithSameDate(Long doctorId, LocalDateTime appointmentDate) {
+        var doctorAppointments = getAppointmentByDoctorId(doctorId);
+        if (FormatUtil.isFilled(doctorAppointments)) {
+            var existingAppointment = doctorAppointments.stream()
+                    .filter(appointment -> appointment.getAppointmentDate().isEqual(appointmentDate) && !appointment.getCancelled().equals(Boolean.TRUE))
+                    .findAny();
+            if (existingAppointment.isPresent()) {
+                throw new AppointmentValidationException(String.format("Doctor with id '%s' has already an appointment with same date '%s'",
+                        doctorId, appointmentDate));
+            }
+        }
+    }
+
+    private void patientHasAnyAppointmentWithSameDate(Long patientId, LocalDateTime appointmentDate, Patient patient) {
+        var patientAppointments = patient.getAppointments();
+        if (FormatUtil.isFilled(patientAppointments)) {
+            var existingAppointment = patientAppointments.stream()
+                    .filter(appointment -> appointment.getAppointmentDate().isEqual(appointmentDate) && !appointment.getCancelled().equals(Boolean.TRUE))
+                    .findAny();
+            if (existingAppointment.isPresent()) {
+                throw new AppointmentValidationException(String.format("Patient with id '%s' has already an appointment with same date '%s'",
+                        patientId, appointmentDate));
+            }
+        }
     }
 
     @Override
