@@ -38,6 +38,7 @@ public class DoctorRepository implements DoctorPersistence {
     public void updateDoctorDetails(Doctor doctor) {
         var existingDoctor = getDoctorEntityById(doctor.getId());
         doctorEntityMapper.update(existingDoctor, doctor);
+        doctorDao.save(existingDoctor);
     }
 
     @Override
