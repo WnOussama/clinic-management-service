@@ -16,10 +16,11 @@ public interface DoctorDao extends JpaRepository<DoctorEntity, Long> {
 
     Optional<DoctorEntity> findByUserEmail(String email);
 
-    @Query(value = "SELECT d FROM DoctorEntity d" +
+    @Query(value = "SELECT DISTINCT d FROM DoctorEntity d" +
             " LEFT JOIN d.availabilities av" +
             " WHERE (:specialityId IS NULL OR d.speciality.id = :specialityId)" +
-            " AND (cast(:before as date) IS NULL OR (av.startDate >= now() AND av.startDate <= :before))")
+            " AND (cast(:before as date) IS NULL OR (av.startDate >= now() AND av.startDate <= :before))" +
+            " ORDER BY d.id")
     Page<DoctorEntity> findAllBySpecialityAndFreeAvailabilityDate(@Param("specialityId") Long specialityId,
                                                                   @Param("before") LocalDateTime before,
                                                                   Pageable pageable);
