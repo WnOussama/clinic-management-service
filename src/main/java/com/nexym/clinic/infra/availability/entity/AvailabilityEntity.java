@@ -22,8 +22,8 @@ public class AvailabilityEntity {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorEntity doctor;
 
     @Column(name = "start_date", nullable = false)

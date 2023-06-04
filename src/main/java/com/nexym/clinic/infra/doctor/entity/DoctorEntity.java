@@ -40,11 +40,9 @@ public class DoctorEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor", orphanRemoval = true)
     private Set<AvailabilityEntity> availabilities;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor", orphanRemoval = true)
     private Set<BillEntity> bills;
 }
