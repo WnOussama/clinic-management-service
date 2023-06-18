@@ -1,6 +1,5 @@
 package com.nexym.clinic.domain.bill.model;
 
-import com.nexym.clinic.domain.appointment.model.Status;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +10,9 @@ import java.time.LocalDateTime;
 @Builder
 public class Bill implements Serializable {
     private Long id;
-    private Status status;
+    private BillStatus status;
     private Long appointmentFee;
+    private Long appointmentId;
+    private Long doctorId;
     private LocalDateTime creationDate;
 }

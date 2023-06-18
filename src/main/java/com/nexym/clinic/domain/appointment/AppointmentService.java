@@ -10,4 +10,8 @@ public interface AppointmentService {
     void addNewAppointment(Long patientId, Long doctorId, LocalDateTime appointmentDate);
 
     List<Appointment> getAppointmentByDoctorId(Long doctorId);
+
+    void approveAppointment(Long doctorId, Long appointmentId);
+
+    void cancelAppointment(Long doctorId, Long appointmentId, String cancellationReason);
 }

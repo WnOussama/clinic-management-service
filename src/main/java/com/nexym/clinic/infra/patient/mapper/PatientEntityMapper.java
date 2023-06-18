@@ -2,10 +2,12 @@ package com.nexym.clinic.infra.patient.mapper;
 
 import com.nexym.clinic.domain.appointment.model.Appointment;
 import com.nexym.clinic.domain.availability.model.Availability;
+import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.patient.model.Patient;
 import com.nexym.clinic.domain.patient.model.PatientList;
 import com.nexym.clinic.infra.appointment.entity.AppointmentEntity;
 import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
+import com.nexym.clinic.infra.bill.entity.BillEntity;
 import com.nexym.clinic.infra.patient.entity.PatientEntity;
 import com.nexym.clinic.infra.user.entity.UserEntity;
 import org.mapstruct.*;
@@ -37,14 +39,25 @@ public interface PatientEntityMapper {
     @Mapping(target = "creationDate", source = "user.creationDate")
     Patient mapToModel(PatientEntity patientEntity);
 
+    @Mapping(target = "modifiedDate", ignore = true)
+    @Mapping(target = "appointment", ignore = true)
+    @Mapping(target = "doctor.id", source = "doctorId")
+    BillEntity mapToBillEntity(Bill billModel);
+
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "patient", ignore = true)
+    @Mapping(target = "availability.id", source = "availabilityId")
     @Mapping(target = "patient.id", source = "patientId")
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     AppointmentEntity mapToAppointmentEntity(Appointment appointment);
 
+    @Mapping(target = "doctorId", source = "doctor.id")
+    @Mapping(target = "appointmentId", source = "appointment.id")
+    @Mapping(target = "appointmentFee", source = "doctor.speciality.appointmentFee")
+    Bill mapToBillModel(BillEntity billEntity);
+
     @Mapping(target = "patientId", source = "patient.id")
+    @Mapping(target = "availabilityId", source = "availability.id")
     @Mapping(target = "doctorId", source = "availability.doctor.id")
     Appointment mapToAppointment(AppointmentEntity appointmentEntity);
 

@@ -24,7 +24,8 @@ public interface AvailabilityWsMapper {
     }
 
     @Mapping(target = "id", ignore = true)
-    com.nexym.clinic.domain.availability.model.Availability mapToAvailabilityModel(AvailabilityRequest availabilityRequest);
+    @Mapping(target = "appointments", ignore = true)
+    com.nexym.clinic.domain.availability.model.Availability mapToAvailabilityModel(Long doctorId, AvailabilityRequest availabilityRequest);
 
     default OffsetDateTime map(LocalDateTime date) {
         if (date != null) {

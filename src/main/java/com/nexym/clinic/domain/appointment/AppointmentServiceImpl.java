@@ -1,11 +1,14 @@
 package com.nexym.clinic.domain.appointment;
 
+import com.nexym.clinic.domain.appointment.exception.AppointmentNotFoundException;
 import com.nexym.clinic.domain.appointment.exception.AppointmentValidationException;
 import com.nexym.clinic.domain.appointment.model.Appointment;
-import com.nexym.clinic.domain.appointment.model.Status;
+import com.nexym.clinic.domain.appointment.model.AppointmentStatus;
 import com.nexym.clinic.domain.appointment.port.AppointmentPersistence;
 import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.bill.model.Bill;
+import com.nexym.clinic.domain.bill.model.BillStatus;
+import com.nexym.clinic.domain.bill.port.BillPersistence;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
@@ -32,6 +35,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
     private AppointmentPersistence appointmentPersistence;
+
+    @Autowired
+    private BillPersistence billPersistence;
 
     @Autowired
     private DoctorPersistence doctorPersistence;
@@ -72,18 +78,20 @@ public class AppointmentServiceImpl implements AppointmentService {
         //TODO (23/04/2023) is it possible to have more than one appointment with same doctor?
         var newAppointment = Appointment.builder()
                 .appointmentDate(appointmentDate)
-                .status(Status.PENDING)
-                .availability(matchingAvailability)
+                .status(AppointmentStatus.PENDING)
+                .availabilityId(matchingAvailability.getId())
                 .patientId(patientId)
                 .build();
-        patientPersistence.addNewAppointment(patientId, newAppointment);
+        var appointmentId = appointmentPersistence.save(newAppointment);
         // asynchronously send emails
         sendAppointmentConfirmation(appointmentDate, patient, doctor);
         var newBill = Bill.builder()
                 .appointmentFee(appointmentFee)
-                .status(Status.PENDING)
+                .status(BillStatus.UNPAID)
+                .doctorId(matchingAvailability.getDoctorId())
+                .appointmentId(appointmentId)
                 .build();
-        doctorPersistence.addNewBill(doctorId, newBill);
+        billPersistence.save(newBill);
         sendBillConfirmation(appointmentDate, patient.getFullName(), doctor.getFullName(), patient.getEmail(), appointmentFee, doctor.getIban());
     }
 
@@ -96,6 +104,67 @@ public class AppointmentServiceImpl implements AppointmentService {
         return availabilities.stream()
                 .flatMap(availability -> appointmentPersistence.getByAvailabilityId(availability.getId()).stream())
                 .toList();
+    }
+
+    @Override
+    public void approveAppointment(Long doctorId, Long appointmentId) {
+        var appointment = appointmentPersistence.getByAppointmentIdAndDoctorId(appointmentId, doctorId)
+                .orElseThrow(() -> new AppointmentNotFoundException(String.format("Appointment with id '%s' for doctor '%s' does not exist", appointmentId, doctorId)));
+        validateAppointment(appointmentId, appointment.getStatus());
+        appointment.setStatus(AppointmentStatus.DONE);
+        if (appointment.getBill() != null) {
+            var bill = appointment.getBill();
+            bill.setStatus(BillStatus.PAID);
+            appointmentPersistence.save(appointment);
+        }
+    }
+
+    private static void validateAppointment(Long appointmentId, AppointmentStatus appointmentStatus) {
+        if (AppointmentStatus.DONE.equals(appointmentStatus)) {
+            throw new AppointmentValidationException(String.format("The appointment with id '%s' has been approved.", appointmentId));
+        }
+        if (AppointmentStatus.CANCELLED.equals(appointmentStatus)) {
+            throw new AppointmentValidationException(String.format("The appointment with id '%s' has been cancelled.", appointmentId));
+        }
+    }
+
+    @Override
+    public void cancelAppointment(Long doctorId, Long appointmentId, String cancellationReason) {
+        var appointment = appointmentPersistence.getByAppointmentIdAndDoctorId(appointmentId, doctorId)
+                .orElseThrow(() -> new AppointmentNotFoundException(String.format("Appointment with id '%s' for doctor '%s' does not exist", appointmentId, doctorId)));
+        validateAppointment(appointmentId, appointment.getStatus());
+        updateAppointment(cancellationReason, appointment);
+        var patient = getPatient(appointment.getPatientId());
+        var doctor = getDoctor(appointment.getDoctorId());
+        notifyPatient(appointment.getAppointmentDate(), appointment.getBill(), patient.getFullName(), doctor.getFullName(), patient.getEmail());
+        notifyDoctor(doctor.getFullName(), doctor.getEmail(), appointment.getAppointmentDate());
+    }
+
+    private void updateAppointment(String cancellationReason, Appointment appointment) {
+        var bill = appointment.getBill();
+        if (bill != null && BillStatus.PAID.equals(bill.getStatus())) {
+            bill.setStatus(BillStatus.TO_BE_REFUNDED);
+        }
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        appointment.setCancellationReason(cancellationReason);
+        appointmentPersistence.save(appointment);
+    }
+
+    private void notifyDoctor(String doctorName, String doctorEmail, LocalDateTime appointmentDate) {
+        var body = String.format("Dear %s,%n%n The appointment on date %s has been cancelled. %n%nSincerely,%nThe Healthy Steps Clinic", doctorName, appointmentDate);
+        sendEmail("Appointment cancelled", body, doctorEmail);
+    }
+
+    private void notifyPatient(LocalDateTime appointmentDate, Bill bill, String patientName, String doctorName, String patientEmail) {
+        var body = String.format("Dear %s,%n%n the cancellation for appointment with doctor %s at %s has been confirmed. %n%n",
+                patientName,
+                doctorName,
+                appointmentDate);
+        if (bill != null && BillStatus.PAID.equals(bill.getStatus())) {
+            body += String.format("You will be refunded for the amount %s within 7 days.", bill.getAppointmentFee());
+        }
+        body += "%n%nSincerely,%nThe Healthy Steps Clinic";
+        sendEmail("Appointment cancelled", body, patientEmail);
     }
 
     private static boolean doNotRespectHoursRules(LocalDateTime appointmentDate,
@@ -137,7 +206,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentsByAvailability.stream()
                 .noneMatch(appointment -> FormatUtil.isBetweenHourRange(appointmentDate,
                         appointment.getAppointmentDate(),
-                        appointment.getAppointmentDate().plusMinutes(appointmentDuration), true) && !Boolean.TRUE.equals(appointment.getCancelled()));
+                        appointment.getAppointmentDate().plusMinutes(appointmentDuration), true) && !AppointmentStatus.CANCELLED.equals(appointment.getStatus()));
     }
 
 

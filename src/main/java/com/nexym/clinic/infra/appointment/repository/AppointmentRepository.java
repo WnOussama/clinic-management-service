@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +20,17 @@ public class AppointmentRepository implements AppointmentPersistence {
     @Override
     public List<Appointment> getByAvailabilityId(Long availabilityId) {
         return appointmentEntityMapper.mapToModelList(appointmentDao.findByAvailabilityId(availabilityId));
+    }
+
+    @Override
+    public Optional<Appointment> getByAppointmentIdAndDoctorId(Long appointmentId, Long doctorId) {
+        return appointmentDao.findByIdAndAvailabilityDoctorId(appointmentId, doctorId).map(appointmentEntityMapper::mapToModel);
+    }
+
+    @Override
+    public Long save(Appointment appointment) {
+        var savedAppointment = appointmentDao.save(appointmentEntityMapper.mapToEntity(appointment));
+        return savedAppointment.getId();
     }
 
 }

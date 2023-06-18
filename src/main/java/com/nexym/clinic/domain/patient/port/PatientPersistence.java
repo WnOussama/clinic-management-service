@@ -1,6 +1,5 @@
 package com.nexym.clinic.domain.patient.port;
 
-import com.nexym.clinic.domain.appointment.model.Appointment;
 import com.nexym.clinic.domain.patient.model.Patient;
 import com.nexym.clinic.domain.patient.model.PatientList;
 
@@ -10,7 +9,6 @@ public interface PatientPersistence {
 
     Long addNewPatient(Patient patient);
     void updatePatientDetails(Patient patient);
-    void addNewAppointment(Long patientId, Appointment appointment);
 
     PatientList getPatientList(Integer page, Integer size);
 

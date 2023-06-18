@@ -1,11 +1,9 @@
 package com.nexym.clinic.domain.bill;
 
-import com.nexym.clinic.domain.bill.exception.BillNotFoundException;
 import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.port.DoctorPersistence;
-import com.nexym.clinic.utils.FormatUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,10 +20,7 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<Bill> getBillByDoctorId(Long doctorId) {
         Doctor doctor = getDoctor(doctorId);
-        var bills = doctor.getBills();
-        if (!FormatUtil.isFilled(bills))
-            throw new BillNotFoundException(String.format("We cannot find any bill for doctor with id '%s'", doctorId));
-        return bills;
+        return doctor.getBills();
     }
 
     private Doctor getDoctor(Long doctorId) {

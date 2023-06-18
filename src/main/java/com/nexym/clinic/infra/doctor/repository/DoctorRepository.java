@@ -1,7 +1,6 @@
 package com.nexym.clinic.infra.doctor.repository;
 
 import com.nexym.clinic.domain.availability.model.Availability;
-import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.model.AvailableWithinNext;
 import com.nexym.clinic.domain.doctor.model.Doctor;
@@ -38,19 +37,13 @@ public class DoctorRepository implements DoctorPersistence {
     public void updateDoctorDetails(Doctor doctor) {
         var existingDoctor = getDoctorEntityById(doctor.getId());
         doctorEntityMapper.update(existingDoctor, doctor);
+        doctorDao.save(existingDoctor);
     }
 
     @Override
     public void addNewAvailability(Long doctorId, Availability availability) {
         var existingDoctor = getDoctorEntityById(doctorId);
         existingDoctor.getAvailabilities().add(doctorEntityMapper.map(availability));
-        doctorDao.save(existingDoctor);
-    }
-
-    @Override
-    public void addNewBill(Long doctorId, Bill bill) {
-        var existingDoctor = getDoctorEntityById(doctorId);
-        existingDoctor.getBills().add(doctorEntityMapper.map(bill));
         doctorDao.save(existingDoctor);
     }
 

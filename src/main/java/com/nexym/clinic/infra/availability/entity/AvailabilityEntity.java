@@ -1,5 +1,6 @@
 package com.nexym.clinic.infra.availability.entity;
 
+import com.nexym.clinic.infra.appointment.entity.AppointmentEntity;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,6 +33,9 @@ public class AvailabilityEntity {
 
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
+
+    @OneToMany(mappedBy = "availability", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<AppointmentEntity> appointments;
 
     @Column(name = "creation_date", nullable = false)
     @CreatedDate

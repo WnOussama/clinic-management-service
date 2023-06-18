@@ -1,6 +1,7 @@
 package com.nexym.clinic.infra.bill.entity;
 
-import com.nexym.clinic.domain.appointment.model.Status;
+import com.nexym.clinic.domain.bill.model.BillStatus;
+import com.nexym.clinic.infra.appointment.entity.AppointmentEntity;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,13 +24,17 @@ public class BillEntity {
     @Column(name = "id")
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "appointment_id", nullable = false, unique = true)
+    private AppointmentEntity appointment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorEntity doctor;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private BillStatus status;
 
     @Column(name = "creation_date", nullable = false)
     @CreatedDate
