@@ -1,9 +1,11 @@
 package com.nexym.clinic.infra.doctor.mapper;
 
+import com.nexym.clinic.domain.appointment.model.Appointment;
 import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.doctor.model.Doctor;
 import com.nexym.clinic.domain.doctor.model.DoctorList;
+import com.nexym.clinic.infra.appointment.entity.AppointmentEntity;
 import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
 import com.nexym.clinic.infra.bill.entity.BillEntity;
 import com.nexym.clinic.infra.doctor.entity.DoctorEntity;
@@ -46,6 +48,11 @@ public interface DoctorEntityMapper {
     @Mapping(target = "creationDate", source = "user.creationDate")
     Doctor mapToModel(DoctorEntity doctorEntity);
 
+    @Mapping(target = "patientId", source = "patient.id")
+    @Mapping(target = "availabilityId", source = "availability.id")
+    @Mapping(target = "doctorId", source = "availability.doctor.id")
+    Appointment mapToModel(AppointmentEntity appointmentEntity);
+
     List<Doctor> mapToModelList(List<DoctorEntity> doctorList);
 
     default DoctorList mapToModelList(Page<DoctorEntity> page) {
@@ -64,19 +71,30 @@ public interface DoctorEntityMapper {
                 .build();
     }
 
+    @Mapping(target = "patient", ignore = true)
+    @Mapping(target = "availability.id", source = "availabilityId")
+    @Mapping(target = "modifiedDate", ignore = true)
+    AppointmentEntity map(Appointment appointment);
+
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "doctor", ignore = true)
+    @Mapping(target = "doctor.id", source = "doctorId")
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     AvailabilityEntity map(Availability availability);
 
+    @Mapping(target = "doctorId", source = "doctor.id")
+    Availability mapToModel(AvailabilityEntity availabilityEntity);
+
+    @Mapping(target = "doctor.id", source = "doctorId")
+    @Mapping(target = "appointment.id", source = "appointmentId")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "doctor", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     BillEntity map(Bill bill);
 
+    @Mapping(target = "appointmentId", source = "appointment.id")
     @Mapping(target = "appointmentFee", source = "doctor.speciality.appointmentFee")
+    @Mapping(target = "doctorId", source = "doctor.id")
     Bill mapToModel(BillEntity billEntity);
 
     @Mapping(target = "id", ignore = true)

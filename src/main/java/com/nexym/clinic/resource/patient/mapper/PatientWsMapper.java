@@ -1,5 +1,6 @@
 package com.nexym.clinic.resource.patient.mapper;
 
+import com.nexym.clinic.api.model.Appointment;
 import com.nexym.clinic.api.model.Patient;
 import com.nexym.clinic.api.model.PatientListResponse;
 import com.nexym.clinic.api.model.PatientRequest;
@@ -29,6 +30,9 @@ public interface PatientWsMapper {
         }
         return null;
     }
+
+    @Mapping(target = "availabilityId", source = "availabilityId")
+    Appointment map(com.nexym.clinic.domain.appointment.model.Appointment appointment);
 
     Patient map(com.nexym.clinic.domain.patient.model.Patient patientModel);
 

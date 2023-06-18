@@ -1,7 +1,8 @@
 package com.nexym.clinic.infra.appointment.entity;
 
-import com.nexym.clinic.domain.appointment.model.Status;
+import com.nexym.clinic.domain.appointment.model.AppointmentStatus;
 import com.nexym.clinic.infra.availability.entity.AvailabilityEntity;
+import com.nexym.clinic.infra.bill.entity.BillEntity;
 import com.nexym.clinic.infra.patient.entity.PatientEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,9 +25,12 @@ public class AppointmentEntity {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "availability_id", nullable = false)
     private AvailabilityEntity availability;
+
+    @OneToOne(mappedBy = "appointment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private BillEntity bill;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
@@ -35,15 +39,12 @@ public class AppointmentEntity {
     @Column(name = "prescription", nullable = false)
     private String prescription;
 
-    @Column(name = "cancelled", nullable = false)
-    private Boolean cancelled;
-
     @Column(name = "cancellation_reason", nullable = false)
     private String cancellationReason;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private AppointmentStatus status;
 
     @Column(name = "appointment_date", nullable = false)
     private LocalDateTime appointmentDate;

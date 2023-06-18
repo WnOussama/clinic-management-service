@@ -1,10 +1,7 @@
 package com.nexym.clinic.resource.appointment.mapper;
 
 import com.nexym.clinic.api.model.Appointment;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.NullValueMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -33,6 +30,9 @@ public interface AppointmentWsMapper {
         }
         return null;
     }
+
+    @Mapping(target = "availabilityId", source = "availabilityId")
+    Appointment map(com.nexym.clinic.domain.appointment.model.Appointment appointment);
 
     List<Appointment> mapToList(List<com.nexym.clinic.domain.appointment.model.Appointment> appointmentList);
 }

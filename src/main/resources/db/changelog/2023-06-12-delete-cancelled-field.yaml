@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-06-12-delete-cancelled-field
+      author: oussamaouannassi@gmail.com
+      changes:
+        - dropColumn:
+            columnName: cancelled
+            tableName: cm_appointments
+      rollback:
+        - addColumn:
+            tableName: cm_appointments
+            columns:
+              - column:
+                  name: cancelled
+                  type: boolean

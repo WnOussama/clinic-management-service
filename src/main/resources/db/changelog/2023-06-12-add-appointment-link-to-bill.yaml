@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-06-12-add-appointment-link-to-bill
+      author: oussamaouannassi@gmail.com
+      changes:
+        - addColumn:
+            tableName: cm_bills
+            columns:
+              - column:
+                  name: appointment_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: constraint_fk_bills_appointments
+                    references: cm_appointments(id)
+                    unique: true
+      rollback:
+        - dropColumn:
+            columnName: appointment_id
+            tableName: cm_bills

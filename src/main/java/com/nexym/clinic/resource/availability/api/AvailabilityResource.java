@@ -20,7 +20,7 @@ public class AvailabilityResource implements AvailabilitiesApi {
 
     @Override
     public ResponseEntity<Void> addNewAvailability(Long doctorId, AvailabilityRequest availabilityRequest) {
-        availabilityService.addNewAvailability(doctorId, availabilityWsMapper.mapToAvailabilityModel(availabilityRequest));
+        availabilityService.addNewAvailability(doctorId, availabilityWsMapper.mapToAvailabilityModel(doctorId, availabilityRequest));
         return ResponseEntity.noContent().build();
     }
 }

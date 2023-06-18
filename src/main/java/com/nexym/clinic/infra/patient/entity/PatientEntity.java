@@ -23,6 +23,6 @@ public class PatientEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "patient", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "patient", fetch = FetchType.LAZY)
     private Set<AppointmentEntity> appointments;
 }

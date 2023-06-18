@@ -137,6 +137,74 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /api/v1/doctors/{doctorId}/appointments/{appointmentId}/do-approve:
+    post:
+      summary: Approve an appointment with a specific identifier for a specific doctor
+      operationId: approveAppointment
+      tags:
+        - Appointments
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor
+          schema:
+            type: integer
+            format: int64
+        - name: appointmentId
+          in: path
+          required: true
+          description: ID of the appointment to cancel
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Appointment approved successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v1/doctors/{doctorId}/appointments/{appointmentId}/do-cancel:
+    post:
+      summary: Cancel an appointment with a specific identifier for a specific doctor
+      operationId: cancelAppointment
+      tags:
+        - Appointments
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          description: ID of the doctor
+          schema:
+            type: integer
+            format: int64
+        - name: appointmentId
+          in: path
+          required: true
+          description: ID of the appointment to cancel
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentCancellationRequest'
+      responses:
+        '204':
+          description: Appointment cancelled successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/v1/doctors/{doctorId}:
     get:
       summary: Retrieve info for a specific doctor
@@ -784,6 +852,12 @@ components:
           type: integer
         number:
           type: integer
+    AppointmentStatus:
+      type: string
+      enum:
+        - CANCELLED
+        - PENDING
+        - DONE
     Appointment:
       type: object
       properties:
@@ -791,10 +865,7 @@ components:
           type: integer
           format: int64
         status:
-          type: string
-          enum:
-            - PENDING
-            - DONE
+          type: AppointmentStatus
         prescription:
           type: string
         appointmentDate:
@@ -806,6 +877,19 @@ components:
         doctorId:
           type: integer
           format: int64
+        cancellationReason:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        availabilityId:
+          type: integer
+          format: int64
+    AppointmentCancellationRequest:
+      type: object
+      properties:
+        cancellationReason:
+          type: string
     AppointmentRequest:
       type: object
       properties:
@@ -824,8 +908,12 @@ components:
         status:
           type: string
           enum:
-            - PENDING
-            - DONE
+            - PAID
+            - UNPAID
+            - TO_BE_REFUNDED
+        appointmentId:
+          type: integer
+          format: int64
         appointmentFee:
           type: integer
           format: int64

@@ -2,6 +2,7 @@ package com.nexym.clinic.resource.appointment.api;
 
 import com.nexym.clinic.api.AppointmentsApi;
 import com.nexym.clinic.api.model.Appointment;
+import com.nexym.clinic.api.model.AppointmentCancellationRequest;
 import com.nexym.clinic.api.model.AppointmentRequest;
 import com.nexym.clinic.domain.appointment.AppointmentService;
 import com.nexym.clinic.resource.appointment.mapper.AppointmentWsMapper;
@@ -30,5 +31,17 @@ public class AppointmentResource implements AppointmentsApi {
     @Override
     public ResponseEntity<List<Appointment>> getAppointmentsByDoctorId(Long doctorId) {
         return ResponseEntity.ok(appointmentWsMapper.mapToList(appointmentService.getAppointmentByDoctorId(doctorId)));
+    }
+
+    @Override
+    public ResponseEntity<Void> approveAppointment(Long doctorId, Long appointmentId) {
+        appointmentService.approveAppointment(doctorId, appointmentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelAppointment(Long doctorId, Long appointmentId, AppointmentCancellationRequest appointmentCancellationRequest) {
+        appointmentService.cancelAppointment(doctorId, appointmentId, appointmentCancellationRequest.getCancellationReason());
+        return ResponseEntity.noContent().build();
     }
 }

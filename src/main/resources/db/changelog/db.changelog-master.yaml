@@ -13,3 +13,9 @@ databaseChangeLog:
       file: db/changelog/2023-05-22-add-bills.yaml
   - include:
       file: db/sql/2023-05-29-add-appointment-fee.sql
+  - include:
+      file: db/changelog/2023-06-12-delete-cancelled-field.yaml
+  - include:
+      file: db/sql/2023-06-12-truncate-bills-table.sql
+  - include:
+      file: db/changelog/2023-06-12-add-appointment-link-to-bill.yaml

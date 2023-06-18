@@ -2,7 +2,6 @@ package com.nexym.clinic.domain.appointment;
 
 import com.nexym.clinic.domain.appointment.exception.AppointmentValidationException;
 import com.nexym.clinic.domain.appointment.model.Appointment;
-import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.patient.exception.PatientNotFoundException;
 import org.assertj.core.api.Assertions;
@@ -147,11 +146,7 @@ class AppointmentServiceTest {
                 .id(1L)
                 .patientId(1L)
                 .doctorId(1L)
-                .availability(Availability.builder()
-                        .id(1L)
-                        .startDate(LocalDateTime.parse("2023-04-24 09:00:00", formatter))
-                        .endDate(LocalDateTime.parse("2023-04-24 18:00:00", formatter))
-                        .build())
+                .availabilityId(1L)
                 .appointmentDate(LocalDateTime.parse("2023-04-24 09:00:00", formatter))
                 .creationDate(LocalDateTime.parse("2023-04-23 20:55:54", formatter))
                 .build();
