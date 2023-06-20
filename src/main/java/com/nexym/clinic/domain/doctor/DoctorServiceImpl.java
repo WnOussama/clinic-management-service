@@ -1,5 +1,6 @@
 package com.nexym.clinic.domain.doctor;
 
+import com.nexym.clinic.domain.appointment.port.GoogleCalendarApi;
 import com.nexym.clinic.domain.doctor.exception.DoctorNotFoundException;
 import com.nexym.clinic.domain.doctor.exception.DoctorValidationException;
 import com.nexym.clinic.domain.doctor.model.AvailableWithinNext;
@@ -26,6 +27,8 @@ public class DoctorServiceImpl implements DoctorService {
     private RulePersistence rulePersistence;
     @Autowired
     private SpecialityPersistence specialityPersistence;
+    @Autowired
+    private GoogleCalendarApi googleCalendarApi;
 
     @Override
     public Long registerDoctor(Doctor doctor) {
@@ -37,6 +40,7 @@ public class DoctorServiceImpl implements DoctorService {
             Long ruleId = checkIfGlobalRuleAlreadyExists();
             checkIfSpecialityAlreadyExists(doctor.getSpecialityId());
             doctor.setRuleId(ruleId);
+            doctor.setCalendarId(googleCalendarApi.addNewCalendar(doctor.getFullName()));
             return doctorPersistence.addNewDoctor(doctor);
         }
     }

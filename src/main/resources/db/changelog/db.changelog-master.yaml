@@ -19,3 +19,5 @@ databaseChangeLog:
       file: db/sql/2023-06-12-truncate-bills-table.sql
   - include:
       file: db/changelog/2023-06-12-add-appointment-link-to-bill.yaml
+  - include:
+      file: db/changelog/2023-06-20-add-doctor-calendar-id.yaml

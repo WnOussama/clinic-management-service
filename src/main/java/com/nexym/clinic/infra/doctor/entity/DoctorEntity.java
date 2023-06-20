@@ -28,6 +28,9 @@ public class DoctorEntity {
     @Column(name = "iban", nullable = false)
     private String iban;
 
+    @Column(name = "calendar_id")
+    private String calendarId;
+
     @OneToOne
     @JoinColumn(name = "speciality_id", nullable = false)
     private SpecialityEntity speciality;
