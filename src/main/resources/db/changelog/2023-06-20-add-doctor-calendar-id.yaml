@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2023-06-20-add-doctor-calendar-id
+      author: oussamaouannassi@gmail.com
+      changes:
+        - addColumn:
+            tableName: cm_doctors
+            columns:
+              - column:
+                  name: calendar_id
+                  type: varchar2
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            columnName: calendar_id
+            tableName: cm_doctors

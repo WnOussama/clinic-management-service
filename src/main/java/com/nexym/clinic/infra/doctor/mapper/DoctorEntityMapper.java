@@ -98,6 +98,7 @@ public interface DoctorEntityMapper {
     Bill mapToModel(BillEntity billEntity);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "calendarId", ignore = true)
     @Mapping(target = "rule", ignore = true)
     @Mapping(target = "user.id", ignore = true)
     @Mapping(target = "user.creationDate", ignore = true)

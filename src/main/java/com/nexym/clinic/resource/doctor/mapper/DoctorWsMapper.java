@@ -22,6 +22,7 @@ public interface DoctorWsMapper {
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "ruleId", ignore = true)
     @Mapping(target = "bills", ignore = true)
+    @Mapping(target = "calendarId", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "availabilities", ignore = true)
     com.nexym.clinic.domain.doctor.model.Doctor mapToDoctorModel(DoctorRequest doctorRequest);
