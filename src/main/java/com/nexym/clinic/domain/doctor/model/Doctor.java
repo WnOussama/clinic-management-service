@@ -21,6 +21,7 @@ public class Doctor extends User {
 
     private Long id;
     private Long ruleId;
+    private String calendarId;
     private Long specialityId;
     private String address;
     private String iban;
@@ -41,6 +42,7 @@ public class Doctor extends User {
                   String phoneNumber,
                   String address,
                   String iban,
+                  String calendarId,
                   List<Availability> availabilities,
                   List<Bill> bills,
                   LocalDateTime creationDate) {
@@ -50,6 +52,7 @@ public class Doctor extends User {
         this.specialityId = specialityId;
         this.address = address;
         this.iban = iban;
+        this.calendarId = calendarId;
         this.availabilities = availabilities;
         this.bills = bills;
     }

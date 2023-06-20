@@ -5,6 +5,7 @@ import com.nexym.clinic.domain.appointment.exception.AppointmentValidationExcept
 import com.nexym.clinic.domain.appointment.model.Appointment;
 import com.nexym.clinic.domain.appointment.model.AppointmentStatus;
 import com.nexym.clinic.domain.appointment.port.AppointmentPersistence;
+import com.nexym.clinic.domain.appointment.port.GoogleCalendarApi;
 import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.bill.model.BillStatus;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,10 +56,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private GoogleCalendarApi googleCalendarApi;
+
     @Override
     public void addNewAppointment(Long patientId, Long doctorId, LocalDateTime appointmentDate) {
-        Patient patient = getPatient(patientId);
-        Doctor doctor = getDoctor(doctorId);
+        var patient = getPatient(patientId);
+        var doctor = getDoctor(doctorId);
 
         if (appointmentDate == null) throw new AppointmentValidationException("Appointment date is required");
 
@@ -84,7 +89,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .build();
         var appointmentId = appointmentPersistence.save(newAppointment);
         // asynchronously send emails
-        sendAppointmentConfirmation(appointmentDate, patient, doctor);
+        createCalendarEvent(doctor.getCalendarId(), appointmentDate, patient, doctor, speciality.getAppointmentDuration());
         var newBill = Bill.builder()
                 .appointmentFee(appointmentFee)
                 .status(BillStatus.UNPAID)
@@ -241,29 +246,22 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 
-    private void sendAppointmentConfirmation(LocalDateTime appointmentDate, Patient patient, Doctor doctor) {
-        // send doctor confirmation email
-        sendAppointmentEmailToDoctor(appointmentDate, patient.getFullName(), doctor.getFullName(), doctor.getEmail());
-        // send patient confirmation email
-        sendAppointmentConfirmationEmailToPatient(appointmentDate, patient.getFullName(), doctor.getFullName(), patient.getEmail());
+    private void createCalendarEvent(String calendarId,
+                                     LocalDateTime appointmentDate,
+                                     Patient patient,
+                                     Doctor doctor,
+                                     Long appointmentDuration) {
+        var attendeeEmailList = new ArrayList<String>();
+        attendeeEmailList.add(patient.getEmail());
+        attendeeEmailList.add(doctor.getEmail());
+        googleCalendarApi.addNewEvent(calendarId, appointmentDate, appointmentDate.plusMinutes(appointmentDuration),
+                getAppointmentSummary(doctor.getLastName(), patient.getLastName()),
+                doctor.getAddress(),
+                attendeeEmailList);
     }
 
-    private void sendAppointmentEmailToDoctor(LocalDateTime appointmentDate, String patientFullName, String doctorFullName, String doctorEmail) {
-        // Construct the email message
-        var subject = "New appointment request";
-        var body = String.format("Dear Dr. %s,%n%nA new appointment has been requested for %s at %s.%n%nSincerely,%nThe Healthy Steps Clinic",
-                doctorFullName, patientFullName, appointmentDate.toString());
-        // Send email to the doctor
-        sendEmail(subject, body, doctorEmail);
-    }
-
-    private void sendAppointmentConfirmationEmailToPatient(LocalDateTime appointmentDate, String patientFullName, String doctorFullName, String patientEmail) {
-        // Construct the email message
-        var subject = "Appointment confirmation";
-        var body = String.format("Dear %s,%n%nYour appointment with Dr. %s has been scheduled for %s.%n%nSincerely,%nThe Healthy Steps Clinic",
-                patientFullName, doctorFullName, appointmentDate.toString());
-        // Send email to the patient
-        sendEmail(subject, body, patientEmail);
+    private static String getAppointmentSummary(String doctorLastName, String patientLastName) {
+        return "Dr" + doctorLastName + "x" + patientLastName;
     }
 
     private void sendBillConfirmation(LocalDateTime appointmentDate, String patientFullName, String doctorFullName, String patientEmail, Long appointmentFee, String iban) {
