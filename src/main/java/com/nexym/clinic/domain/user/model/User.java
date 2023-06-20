@@ -1,10 +1,7 @@
 package com.nexym.clinic.domain.user.model;
 
 import com.nexym.clinic.utils.FormatUtil;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 
 @Data
@@ -28,6 +28,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String phoneNumber;
+    private ResetPassword reset;
     private LocalDateTime creationDate;
 
     public List<String> applyValidations() {
@@ -51,6 +52,12 @@ public class User implements UserDetails {
             subErrors.add("Phone number should be filled");
         }
         return subErrors;
+    }
+
+    public String getFullName() {
+        return Stream.of(getFirstName(), getLastName())
+                .filter(x -> x != null && !x.isEmpty())
+                .collect(joining(" "));
     }
 
     @Override
