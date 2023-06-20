@@ -3,6 +3,7 @@ package com.nexym.clinic.domain.doctor.model;
 import com.nexym.clinic.domain.availability.model.Availability;
 import com.nexym.clinic.domain.bill.model.Bill;
 import com.nexym.clinic.domain.user.model.Civility;
+import com.nexym.clinic.domain.user.model.ResetPassword;
 import com.nexym.clinic.domain.user.model.User;
 import com.nexym.clinic.utils.FormatUtil;
 import lombok.Builder;
@@ -11,9 +12,6 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.joining;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -41,10 +39,11 @@ public class Doctor extends User {
                   String phoneNumber,
                   String address,
                   String iban,
+                  ResetPassword resetPassword,
                   List<Availability> availabilities,
                   List<Bill> bills,
                   LocalDateTime creationDate) {
-        super(userId, civility, firstName, lastName, email, password, phoneNumber, creationDate);
+        super(userId, civility, firstName, lastName, email, password, phoneNumber, resetPassword, creationDate);
         this.id = id;
         this.ruleId = ruleId;
         this.specialityId = specialityId;
@@ -52,12 +51,6 @@ public class Doctor extends User {
         this.iban = iban;
         this.availabilities = availabilities;
         this.bills = bills;
-    }
-
-    public String getFullName() {
-        return Stream.of(getFirstName(), getLastName())
-                .filter(x -> x != null && !x.isEmpty())
-                .collect(joining(" "));
     }
 
     @Override

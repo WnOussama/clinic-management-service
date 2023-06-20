@@ -22,6 +22,7 @@ public interface PatientWsMapper {
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "appointments", ignore = true)
+    @Mapping(target = "resetPassword", ignore = true)
     com.nexym.clinic.domain.patient.model.Patient mapToPatientModel(PatientRequest patientRequest);
 
     default OffsetDateTime map(LocalDateTime date) {

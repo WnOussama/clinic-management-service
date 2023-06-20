@@ -14,4 +14,10 @@ public interface UserService extends UserDetailsService {
     List<User> getUserList();
 
     Authentication authenticate(LoginCredential loginCredential, AuthenticationManager authenticationManager);
+
+    void forgetPassword(String email);
+
+    void updatePassword(String token, String password);
+
+    void confirmPasswordReset(String resetPasswordToken);
 }

@@ -2,6 +2,7 @@ package com.nexym.clinic.domain.patient.model;
 
 import com.nexym.clinic.domain.appointment.model.Appointment;
 import com.nexym.clinic.domain.user.model.Civility;
+import com.nexym.clinic.domain.user.model.ResetPassword;
 import com.nexym.clinic.domain.user.model.User;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +10,6 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.joining;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -29,16 +27,11 @@ public class Patient extends User {
                    String email,
                    String password,
                    String phoneNumber,
+                   ResetPassword resetPassword,
                    List<Appointment> appointments,
                    LocalDateTime creationDate) {
-        super(userId, civility, firstName, lastName, email, password, phoneNumber, creationDate);
+        super(userId, civility, firstName, lastName, email, password, phoneNumber, resetPassword, creationDate);
         this.id = id;
         this.appointments = appointments;
-    }
-
-    public String getFullName() {
-        return Stream.of(getFirstName(), getLastName())
-                .filter(x -> x != null && !x.isEmpty())
-                .collect(joining(" "));
     }
 }

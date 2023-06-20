@@ -45,7 +45,10 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "creation_date", nullable = false)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ResetPasswordEntity reset;
+
+    @Column(name = "creation_date", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime creationDate;
 

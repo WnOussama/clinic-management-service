@@ -11,6 +11,9 @@ public interface UserPersistence {
 
     Optional<User> getUserByEmail(String email);
 
+    Optional<User> getUserByToken(String token);
+
     List<User> getUserList();
 
+    User save(User user);
 }

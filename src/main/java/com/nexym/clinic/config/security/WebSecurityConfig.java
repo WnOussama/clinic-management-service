@@ -40,10 +40,14 @@ public class WebSecurityConfig {
     private static final String PATIENTS_ENDPOINT = "/api/v1/patients";
     private static final String DOCTOR_SPECIALITIES_ENDPOINT = "/api/v1/specialities";
     private static final String AUTHENTICATE_ENDPOINT = "/api/v1/authenticate";
+    private static final String FORGET_PASSWORD_ENDPOINT = "/api/v1/forgot-password";
+    private static final String RESET_PASSWORD_ENDPOINT = "/api/v1/reset-password";
     private static final String[] AUTH_WHITELIST = {
             ACTUATOR_ENDPOINT,
             DOCTOR_SPECIALITIES_ENDPOINT,
             AUTHENTICATE_ENDPOINT,
+            FORGET_PASSWORD_ENDPOINT,
+            RESET_PASSWORD_ENDPOINT,
             // -- Swagger UI v3 (OpenAPI)
             "/api-docs/**",
             "/swagger-ui/**"

@@ -34,6 +34,7 @@ public interface DoctorEntityMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "modifiedDate", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "reset", ignore = true)
     UserEntity mapToUserEntity(Doctor doctorModel);
 
     @Mapping(target = "userId", source = "user.id")
@@ -46,6 +47,7 @@ public interface DoctorEntityMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "phoneNumber", source = "user.phoneNumber")
     @Mapping(target = "creationDate", source = "user.creationDate")
+    @Mapping(target = "resetPassword", ignore = true)
     Doctor mapToModel(DoctorEntity doctorEntity);
 
     @Mapping(target = "patientId", source = "patient.id")
