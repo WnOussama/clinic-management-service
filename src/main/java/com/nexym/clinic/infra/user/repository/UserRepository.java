@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -28,7 +29,7 @@ public class UserRepository implements UserPersistence {
     }
 
     @Override
-    public Optional<User> getUserByToken(String token) {
+    public Optional<User> getUserByToken(UUID token) {
         return userDao.findByResetToken(token).map(userEntityMapper::mapToModel);
     }
 

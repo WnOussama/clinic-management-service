@@ -11,7 +11,7 @@ public interface AppointmentService {
 
     List<Appointment> getAppointmentByDoctorId(Long doctorId);
 
-    void approveAppointment(Long doctorId, Long appointmentId);
+    void approveAppointment(Long doctorId, Long appointmentId, String prescription);
 
     void cancelAppointment(Long doctorId, Long appointmentId, String cancellationReason);
 }
