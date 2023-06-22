@@ -19,6 +19,10 @@ In order to start the application, run:
 To access swagger ui in local environment, go to:
 **`http://localhost:8085/clinic-management-service/swagger-ui/index.html`**
 
+For remote access, go to:
+
+**`http://clinic-management-service.eu-west-3.elasticbeanstalk.com/clinic-management-service/swagger-ui/index.html`**
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 

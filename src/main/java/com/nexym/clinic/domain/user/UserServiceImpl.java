@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updatePassword(String token, String newPassword) {
+    public void updatePassword(UUID token, String newPassword) {
         var user = userPersistence.getUserByToken(token)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with generated token '%s' does not exist", token)));
         if (user.getReset() == null) throw new UserValidationException("Not yet called forget password");
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void confirmPasswordReset(String resetPasswordToken) {
+    public void confirmPasswordReset(UUID resetPasswordToken) {
         var user = userPersistence.getUserByToken(resetPasswordToken)
                 .orElseThrow();
         if (user.getReset() == null) throw new UserValidationException("Not yet called forget password");

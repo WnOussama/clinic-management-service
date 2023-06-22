@@ -138,11 +138,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void approveAppointment(Long doctorId, Long appointmentId) {
+    public void approveAppointment(Long doctorId, Long appointmentId, String prescription) {
         var appointment = appointmentPersistence.getByAppointmentIdAndDoctorId(appointmentId, doctorId)
                 .orElseThrow(() -> new AppointmentNotFoundException(String.format("Appointment with id '%s' for doctor '%s' does not exist", appointmentId, doctorId)));
         validateAppointment(appointmentId, appointment.getStatus());
         appointment.setStatus(AppointmentStatus.DONE);
+        appointment.setPrescription(prescription);
         if (appointment.getBill() != null) {
             var bill = appointment.getBill();
             bill.setStatus(BillStatus.PAID);

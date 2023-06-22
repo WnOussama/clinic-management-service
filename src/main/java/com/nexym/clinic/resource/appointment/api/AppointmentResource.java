@@ -2,6 +2,7 @@ package com.nexym.clinic.resource.appointment.api;
 
 import com.nexym.clinic.api.AppointmentsApi;
 import com.nexym.clinic.api.model.Appointment;
+import com.nexym.clinic.api.model.AppointmentApprovalRequest;
 import com.nexym.clinic.api.model.AppointmentCancellationRequest;
 import com.nexym.clinic.api.model.AppointmentRequest;
 import com.nexym.clinic.domain.appointment.AppointmentService;
@@ -34,8 +35,8 @@ public class AppointmentResource implements AppointmentsApi {
     }
 
     @Override
-    public ResponseEntity<Void> approveAppointment(Long doctorId, Long appointmentId) {
-        appointmentService.approveAppointment(doctorId, appointmentId);
+    public ResponseEntity<Void> approveAppointment(Long doctorId, Long appointmentId, AppointmentApprovalRequest approvalRequest) {
+        appointmentService.approveAppointment(doctorId, appointmentId, approvalRequest.getPrescription());
         return ResponseEntity.noContent().build();
     }
 

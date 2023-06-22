@@ -4,6 +4,7 @@ import com.nexym.clinic.domain.user.model.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserPersistence {
 
@@ -11,7 +12,7 @@ public interface UserPersistence {
 
     Optional<User> getUserByEmail(String email);
 
-    Optional<User> getUserByToken(String token);
+    Optional<User> getUserByToken(UUID token);
 
     List<User> getUserList();
 

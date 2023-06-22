@@ -154,10 +154,16 @@ paths:
         - name: appointmentId
           in: path
           required: true
-          description: ID of the appointment to cancel
+          description: ID of the appointment to approve
           schema:
             type: integer
             format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentApprovalRequest'
       responses:
         '204':
           description: Appointment approved successfully
@@ -732,6 +738,7 @@ components:
         properties:
             token:
               type: string
+              format: uuid
               description: 'Token of the user'
               example: '1cedd21a-0f78-11ee-be56-0242ac120002'
             password:
@@ -947,6 +954,11 @@ components:
         availabilityId:
           type: integer
           format: int64
+    AppointmentApprovalRequest:
+      type: object
+      properties:
+        prescription:
+          type: string
     AppointmentCancellationRequest:
       type: object
       properties:

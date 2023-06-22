@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
     User getUserById(Long userId);
@@ -17,7 +18,7 @@ public interface UserService extends UserDetailsService {
 
     void forgetPassword(String email);
 
-    void updatePassword(String token, String password);
+    void updatePassword(UUID token, String password);
 
-    void confirmPasswordReset(String resetPasswordToken);
+    void confirmPasswordReset(UUID resetPasswordToken);
 }
